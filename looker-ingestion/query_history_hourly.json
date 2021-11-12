@@ -1,0 +1,39 @@
+{
+    "query_history_hourly": {
+        "body": {
+            "model": "i__looker",
+            "view": "history",
+            "fields": [
+                "query.id",
+                "history.created_time",
+                "query.model",
+                "query.view",
+                "space.id",
+                "look.id",
+                "dashboard.id",
+                "user.id",
+                "query.fields",
+                "history.id",
+                "history.message",
+                "history.dashboard_id",
+                "history.status",
+                "history.result_source",
+                "history.source",
+                "history.runtime",
+                "sql_text.text",
+                "query.filter_expression",
+                "query.filters",
+                "query.filter_config"
+            ],
+            "filters": {
+                "query.model": "-EMPTY",
+                "history.runtime": "NOT NULL",
+                "user.is_looker": "No"
+            },
+            "sorts": [
+                "history.created_time"
+            ],
+            "datetime": "history.created_time"
+        }
+    }
+}
