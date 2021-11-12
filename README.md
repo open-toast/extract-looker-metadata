@@ -9,7 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 [Looker SDK](https://docs.looker.com/reference/api-and-integration/api-sdk) and credentials. Configure your [variables variables](https://github.com/looker-open-source/sdk-codegen#configuring-lookerini-or-env)
-S3 credentials and [boto3](https://pypi.org/project/boto3/)
+[S3 credentials](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html) and [boto3](https://pypi.org/project/boto3/)
 
 ### Installing
 
@@ -41,21 +41,6 @@ Explain what these tests test and why
 Give an example
 ```
 
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Gradle](https://gradle.org/) - Build and dependency management
 
 ## Contributing
 
@@ -63,20 +48,6 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 Project email: CREATE GOOGLE GROUP HERE
 
-## Versioning
-
-See CHANGELOG for a history of changes to this repo.
-
-## Authors
-
-See AUTHORS
-
 ## License
 
 This project is licensed under the Apache 2 License - see the [LICENSE](LICENSE) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
