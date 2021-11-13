@@ -1,0 +1,2 @@
+boto3
+looker_sdk
