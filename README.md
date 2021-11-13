@@ -18,16 +18,10 @@ A step by step series of examples that tell you how to get a development env run
 Say what the step will be
 
 ```
-python -m pip install git+https://github.com/toasttab/extract-looker-metadata.git
+pip install <the package once it's ready>
 ```
 
-And repeat
 
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 
 ## Contributing
