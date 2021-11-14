@@ -60,7 +60,7 @@ def find_date_range(start_time):
         return None
     hours_old = min(int(hours_old) + 1, 24)
     end_time = start_time + timedelta(hours=hours_old, minutes=0)
-    print(f"{start_time} to {end_time}")
+    logging.info(f"{start_time} to {end_time}")
     return [start_time, end_time]
 
 
