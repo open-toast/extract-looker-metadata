@@ -8,7 +8,5 @@ setup(
     install_requires=[
         'boto3',
         'looker_sdk'
-    ],
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest']
+    ]
 )

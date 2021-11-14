@@ -84,15 +84,6 @@ Explain what these tests test and why
 Give an example
 ```
 
-### pylint
-
-To ensure the Python adheres PEP8 standards and passes sniff tests, all changes must pass PyLint.
-See more information [here](https://pylint.org).
-
-```
-pylint looker_ingestion/
-```
-
 ## Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
