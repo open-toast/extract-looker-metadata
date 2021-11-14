@@ -26,7 +26,6 @@ def load_s3_json(dataframe, local_file_name, output_filename, s3_bucket=BUCKET_N
         shutil.rmtree(temp_dir.name)
 
 def load_s3(s3_bucket, input_filename, output_filename):
-
     """ Pushes file to S3. """
 
     s3_storage = boto3.resource("s3")
@@ -37,6 +36,7 @@ def load_s3(s3_bucket, input_filename, output_filename):
     )
 
 def read_json(key, s3_bucket=BUCKET_NAME):
+    """ Given a key within an S3 buckets, reads through all files and returns content"""
     s3_storage = boto3.resource("s3")
     content_object = s3_storage.Object(s3_bucket, key)
     file_content = content_object.get()['Body'].read().decode('utf-8')
