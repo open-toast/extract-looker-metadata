@@ -1,8 +1,8 @@
-import looker_ingestion
+from looker_ingestion import sync_data
 from datetime import datetime, timedelta
 
 def test_extract_query_details():
-    test_query_name, test_query_body = looker_ingestion.extract_query_details("test_query.json")
+    test_query_name, test_query_body = sync_data.extract_query_details("test_query.json")
 
     assert test_query_name == "test_query_name"
     assert test_query_body["model"] == "test_model"
@@ -10,13 +10,14 @@ def test_extract_query_details():
 
 
 def test_find_date_range():
-    today = datetime.datetime.now()
-    one_day_ago = today - timedelta(days = 1)
-    two_days_ago = today - timedelta(days = 2)
-    fortynine_days_ago = today - timedelta(days = 49)
-    fifty_days_ago = today - timedelta(days = 50)
+    today = datetime.now()
+    one_day_ago = (today - timedelta(days = 1)).strftime('%Y-%m-%d %H:%M:%S')
+    two_days_ago = (today - timedelta(days = 2)).strftime('%Y-%m-%d %H:%M:%S')
+    fortynine_days_ago = (today - timedelta(days = 49)).strftime('%Y-%m-%d %H:%M:%S')
+    fifty_days_ago = (today - timedelta(days = 50)).strftime('%Y-%m-%d %H:%M:%S')
+    today_string = today.strftime('%Y-%m-%d %H:%M:%S')
 
-    assert looker_ingestion.find_date_range(datetime.now()) == None
-    assert looker_ingestion.find_date_range(one_day_ago) == one_day_ago, today
-    assert looker_ingestion.find_date_range(two_days_ago) == two_days_ago, one_day_ago
-    assert looker_ingestion.find_date_range(fifty_days_ago) == fifty_days_ago, fortynine_days_ago
+    assert sync_data.find_date_range(today_string) == None
+    assert sync_data.find_date_range(one_day_ago) == one_day_ago, today
+    assert sync_data.find_date_range(two_days_ago) == two_days_ago, one_day_ago
+    assert sync_data.find_date_range(fifty_days_ago) == fifty_days_ago, fortynine_days_ago
