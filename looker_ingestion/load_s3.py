@@ -35,10 +35,14 @@ def load_s3(s3_bucket, input_filename, output_filename):
     s3:// {s3_bucket} as {output_filename}"
     )
 
-def read_json(key, s3_bucket=BUCKET_NAME):
+def read_json(prefix, s3_bucket=BUCKET_NAME):
     """ Given a key within an S3 buckets, reads through all files and returns content"""
     s3_storage = boto3.resource("s3")
-    content_object = s3_storage.Object(s3_bucket, key)
-    file_content = content_object.get()['Body'].read().decode('utf-8')
-    json_content = [json.loads(line) for line in file_content.splitlines()]
-    return json_content
+    my_bucket = s3_storage.Bucket(s3_bucket)
+    json_objects = []
+    for object_summary in my_bucket.objects.filter(Prefix=prefix):
+        content_object = s3_storage.Object(s3_bucket, object_summary.key)
+        file_content = content_object.get()['Body'].read().decode('utf-8')
+        json_content = [json.loads(line) for line in file_content.splitlines()]
+        json_objects.append(json_content)
+    return json_objects

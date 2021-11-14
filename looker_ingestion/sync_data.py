@@ -28,10 +28,10 @@ def find_last_date(query_name, datetime_index):
         last_date_object = read_json(f'looker/{query_name}/looker_{query_name}')
         last_date = max(last_date_object[f"'{datetime_index}'"])
     except Exception as e:
-        logging.info(f"Received error {e} when trying to extact date from table; running with {first_date}")
+        print(f"Received error {e} when trying to extact date from table; running with {first_date}")
         return first_date
     if last_date is None or last_date == []:
-        logging.info(f"No date found; running with {first_date}")
+        print(f"No date found; running with {first_date}")
         return first_date
     start_time = last_date
     hours_old = (NOW - last_date).seconds // 3600
@@ -41,7 +41,7 @@ def find_last_date(query_name, datetime_index):
         sys.exit(0)
     hours_old = min(int(hours_old) + 1, 24)
     end_time = start_time + timedelta(hours=hours_old, minutes=0)
-    logging.info(f"{start_time} to {end_time}")
+    print(f"{start_time} to {end_time}")
     return  f"{start_time.strftime('%Y-%m-%d %H:%M:%S')} to {end_time.strftime('%Y-%m-%d %H:%M:%S')}"
 
 def extract_data(json_filename):
