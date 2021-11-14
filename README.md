@@ -72,7 +72,30 @@ In order to do incremental, we find the MAX(datetime) found in S3 and then add u
 
 If there is an error or no new rows are found or the row limit is reached, the script will log an errror.
 
+## Running the tests
+
+Explain how to run the automated tests for this system
+
+### Break down into end to end tests
+
+Explain what these tests test and why
+
+```
+Give an example
+```
+
+### pylint
+
+To ensure the Python adheres PEP8 standards and passes sniff tests, all changes must pass PyLint.
+See more information [here](https://pylint.org).
+
+```
+pylint looker_ingestion/
+```
+
 ## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 Project email: CREATE GOOGLE GROUP HERE
 
