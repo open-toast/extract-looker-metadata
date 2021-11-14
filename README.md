@@ -1,4 +1,4 @@
-# Looker Metadata Extraxtor
+# Looker Metadata Extractor
 
 This project takes a JSON file of information about a Looker query and runs it on a Looker instance and sends the results to an S3 bucket.
 
@@ -79,19 +79,26 @@ If there is an error or no new rows are found or the row limit is reached, the s
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+to run the tests:
 
 ```
-Give an example
+pytest tests/
 ```
+
+#### test_extract_query_details
+
+This test ensures that the script can read in a JSON file and produce the the 
+right attributes from the JSON.
+
+#### test_find_date_range
+
+This test ensures that, given the right last date of data, the script will pick
+the right range to query Looker with.
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, 
+and the process for submitting pull requests to us.
 
 Project email: CREATE GOOGLE GROUP HERE
 
