@@ -44,5 +44,5 @@ def read_json(prefix, s3_bucket=BUCKET_NAME):
         content_object = s3_storage.Object(s3_bucket, object_summary.key)
         file_content = content_object.get()['Body'].read().decode('utf-8')
         json_content = [json.loads(line) for line in file_content.splitlines()]
-        json_objects.append(json_content)
+        json_objects.extend(json_content)
     return json_objects
