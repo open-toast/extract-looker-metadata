@@ -25,12 +25,14 @@ def find_last_date(query_name, datetime_index):
     first_date  = '1 day'
     ## get the largest query time in the data warehouse
     try:
-        last_date_object = read_json(f'looker/{query_name}/looker_{query_name}')
-        last_date = max(last_date_object[f"'{datetime_index}'"])
+        date_object = read_json(f'looker/{query_name}/looker_{query_name}')
+        last_date = '1990-01-01'
+        for last_date_object in date_object:
+            last_date = max(last_date, max(last_date_object[f"'{datetime_index}'"]))
     except Exception as e:
         print(f"Received error {e} when trying to extact date from table; running with {first_date}")
         return first_date
-    if last_date is None or last_date == []:
+    if last_date is None or last_date == [] or last_date == '1990-01-01':
         print(f"No date found; running with {first_date}")
         return first_date
     start_time = last_date
