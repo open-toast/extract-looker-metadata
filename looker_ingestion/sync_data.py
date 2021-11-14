@@ -34,7 +34,7 @@ def find_last_date(query_name, datetime_index):
     first_date = "1 day"
     ## get the largest query time in the data warehouse
     date_object = read_json(f"looker/{query_name}/looker_{query_name}")
-    last_date = "1990-01-01"
+    last_date = "1990-01-01 00:00:00"
     for last_date_object in date_object:
         for row in last_date_object:
             last_date = max(last_date, row[datetime_index])
@@ -49,7 +49,7 @@ def find_last_date(query_name, datetime_index):
 def find_date_range(start_time):
     hours_old = (
         datetime.now() - datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-    ).seconds // 3600
+    ).total_seconds // 3600
     ## given it a ten minute time difference
     if hours_old <= 0.16:
         logging.warning("All up to date, not running any data")
