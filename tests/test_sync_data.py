@@ -8,7 +8,7 @@ from looker_ingestion import sync_data
 from datetime import datetime, timedelta
 
 def test_extract_query_details():
-    test_query_name, test_query_body = sync_data.extract_query_details("tests/test_query.json")
+    test_query_name, test_query_body = sync_data.extract_query_details("../tests/test_query.json")
 
     assert test_query_name == "test_query_name"
     assert test_query_body["model"] == "test_model"
