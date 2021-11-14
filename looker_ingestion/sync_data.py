@@ -8,7 +8,7 @@ from datetime import timedelta, datetime
 import sys
 
 import looker_sdk
-from load_s3 import load_s3_json, read_json
+from looker_ingestion.load_s3 import load_s3_json, read_json
 
 PARENT_PATH = os.path.dirname(__file__)
 LIMIT = 60000
