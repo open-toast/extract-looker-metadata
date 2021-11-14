@@ -25,7 +25,7 @@ You can use the function directly:
 ```
 import extract_looker_metadata
 
-extract_looker_metadata.extract_data('query_history_hourly.json')
+sync_data.extract_data('query_history_hourly.json')
 ```
 
 You can call the function as part of an Airflow task:
