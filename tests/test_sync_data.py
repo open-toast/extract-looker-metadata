@@ -1,8 +1,10 @@
 import sys
 import os
 currentdir = os.path.dirname(os.path.realpath(__file__))
-parentdir = os.path.dirname(os.path.dirname(os.path.dirname(currentdir)))
+parentdir = os.path.dirname(currentdir)
+looker_ingestion_dir = os.path.join(parentdir, 'looker_ingestion')
 sys.path.append(parentdir)
+sys.path.append(looker_ingestion_dir)
 
 from looker_ingestion import sync_data
 from datetime import datetime, timedelta
@@ -20,10 +22,10 @@ def test_find_date_range():
         return actual_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
     today = datetime.now()
-    one_day_ago = (today - timedelta(days = 1)).strftime('%Y-%m-%d %H:%M:%S')
-    two_days_ago = (today - timedelta(days = 2)).strftime('%Y-%m-%d %H:%M:%S')
-    fortynine_days_ago = (today - timedelta(days = 49)).strftime('%Y-%m-%d %H:%M:%S')
-    fifty_days_ago = (today - timedelta(days = 50)).strftime('%Y-%m-%d %H:%M:%S')
+    one_day_ago = (today - timedelta(days = 1))
+    two_days_ago = (today - timedelta(days = 2))
+    fortynine_days_ago = (today - timedelta(days = 49))
+    fifty_days_ago = (today - timedelta(days = 50))
     today_string = today.strftime('%Y-%m-%d %H:%M:%S')
 
     assert sync_data.find_date_range(today_string) == None

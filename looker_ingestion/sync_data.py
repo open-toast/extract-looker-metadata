@@ -8,7 +8,7 @@ from datetime import timedelta, datetime
 import sys
 
 import looker_sdk
-from looker_ingestion.load_s3 import load_s3_json, read_json
+from load_s3 import load_s3_json, read_json
 
 PARENT_PATH = os.path.dirname(__file__)
 LIMIT = 60000
@@ -42,22 +42,26 @@ def find_last_date(query_name, datetime_index):
         logging.error(f"No date found; running with {first_date}")
         return first_date
     else:
-        start_time, end_time = find_date_range(last_date)
-        return f"""{start_time.strftime('%Y-%m-%d %H:%M:%S')} 
-                    to {end_time.strftime('%Y-%m-%d %H:%M:%S')}"""
+        times = []
+        times = find_date_range(last_date)
+        if times is None or times == []:
+            sys.exit()
+        return f"""{times[0].strftime('%Y-%m-%d %H:%M:%S')} 
+                    to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
 
 def find_date_range(start_time):
+    start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
     hours_old = (
-        datetime.now() - datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-    ).total_seconds // 3600
+        datetime.now() - start_time
+    ).total_seconds() // 3600
     ## given it a ten minute time difference
     if hours_old <= 0.16:
         logging.warning("All up to date, not running any data")
         return None
     hours_old = min(int(hours_old) + 1, 24)
     end_time = start_time + timedelta(hours=hours_old, minutes=0)
-    logging.info(f"{start_time} to {end_time}")
-    return start_time, end_time
+    print(f"{start_time} to {end_time}")
+    return [start_time, end_time]
 
 
 def extract_data(json_filename):
@@ -79,8 +83,6 @@ def extract_data(json_filename):
     ## if there's no datetime, don't run it
     if not (datetime_index is None or filters.get(datetime_index) is not None):
         date_filter = find_last_date(query_name, datetime_index)
-        if date_filter is None:
-            sys.exit(0)
         filters[datetime_index] = f"{date_filter}"
 
     ## hit the Looker API
