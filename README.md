@@ -58,12 +58,18 @@ The explores available in the i__looker model are:
 * Field Usage
 
 The fields to fill out in the JSON file are: 
-**query_history_weekly**: whatever you want to call this query, it will definitely be the table name so choose wisely 
+**query_history_weekly**: whatever you want to call this query, it will definitely be the table name so choose wisely
+
 **body.model**: the name of the model you want to extract from, should be in the URL of your query 
+
 **body.view**: the name of the explore you’re using, circled in red. yes, they call an explore a view throughout all the Looker API / database. 
+
 **body.fields**: a list of the fields you want in the form <table name>.<field name>. Note to use the names from SQL which may vary from the sidebar. In addition, you can't do calculations/custom fields unless they’re already made. 
+
 **body.filters**: A list of filters you want to see. Use this format 
+
 **body.sorts**: Not shown, but a list of fields you want to sort by. ASC by default, you can also put DESC 
+
 **datetime**: This is effectively “what field do you want to use so we can extract only new data?” Extracting all data is probably unrealistic because of time and row limits. If this field also exists in your filters, we will defer to the filter value. If not, we will calculate the next chunk of data we can bring in 
 
 In order to do incremental, we find the MAX(datetime) found in S3 and then add up to 24 hours to that, stopping if we reach the current time. We also have a row limit of 60000 and a time limit of 5 minutes (adjustable as a Looker env variable). If it hits the row limit, you get all the data it has pulled so far (a good reason to use sorts), but if you hit the timeout limit you get nothing. For this reason, we like to keep the increments small.
