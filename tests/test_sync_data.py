@@ -1,3 +1,9 @@
+import sys
+import os
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(os.path.dirname(os.path.dirname(currentdir)))
+sys.path.append(parentdir)
+
 from looker_ingestion import sync_data
 from datetime import datetime, timedelta
 
