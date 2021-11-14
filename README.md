@@ -57,7 +57,8 @@ The explores available in the i__looker model are:
 * Event Attribute
 * Field Usage
 
-The fields to fill out in the JSON file are: 
+The fields to fill out in the JSON file are:
+
 **query_history_weekly**: whatever you want to call this query, it will definitely be the table name so choose wisely
 
 **body.model**: the name of the model you want to extract from, should be in the URL of your query 
