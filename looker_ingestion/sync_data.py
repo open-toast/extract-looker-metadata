@@ -15,11 +15,15 @@ LIMIT = 60000
 NOW = str(time.time()).split(".")[0]
 
 
-def import_json(json_file_path):
+def extract_query_details(json_filename):
     """ Gets the query/body for each query from the JSON file """
+    json_file_path = os.path.join(PARENT_PATH, json_filename)
     with open(json_file_path, "r") as json_file:
         uploaded_tables = json.load(json_file)
-    return uploaded_tables
+    query_name = list(uploaded_tables.keys())[0]
+    query_details = uploaded_tables[query_name]
+    query_body = query_details.get("body")
+    return query_name, query_body
 
 
 def find_last_date(query_name, datetime_index):
@@ -29,31 +33,31 @@ def find_last_date(query_name, datetime_index):
     ## if there's no data, get the last day
     first_date = "1 day"
     ## get the largest query time in the data warehouse
-    try:
-        date_object = read_json(f"looker/{query_name}/looker_{query_name}")
-        last_date = "1990-01-01"
-        for last_date_object in date_object:
-            for row in last_date_object:
-                last_date = max(last_date, row[datetime_index])
-    except Exception as e:
-        logging.error(f"""Received error {e} when trying to extact date from S3;
-            running with {first_date}""")
-        return first_date
+    date_object = read_json(f"looker/{query_name}/looker_{query_name}")
+    last_date = "1990-01-01"
+    for last_date_object in date_object:
+        for row in last_date_object:
+            last_date = max(last_date, row[datetime_index])
     if last_date is None or last_date == [] or last_date == "1990-01-01":
         logging.error(f"No date found; running with {first_date}")
         return first_date
-    start_time = last_date
+    else:
+        start_time, end_time = find_date_range(last_date)
+        return f"""{start_time.strftime('%Y-%m-%d %H:%M:%S')} 
+                    to {end_time.strftime('%Y-%m-%d %H:%M:%S')}"""
+
+def find_date_range(start_time):
     hours_old = (
-        datetime.now() - datetime.strptime(last_date, "%Y-%m-%d %H:%M:%S")
+        datetime.now() - datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
     ).seconds // 3600
     ## given it a ten minute time difference
     if hours_old <= 0.16:
         logging.warning("All up to date, not running any data")
-        sys.exit(0)
+        return None
     hours_old = min(int(hours_old) + 1, 24)
     end_time = start_time + timedelta(hours=hours_old, minutes=0)
-    logging.error(f"{start_time} to {end_time}")
-    return f"{start_time.strftime('%Y-%m-%d %H:%M:%S')} to {end_time.strftime('%Y-%m-%d %H:%M:%S')}"
+    logging.info(f"{start_time} to {end_time}")
+    return start_time, end_time
 
 
 def extract_data(json_filename):
@@ -63,22 +67,20 @@ def extract_data(json_filename):
     that holds the query info"""
 
     sdk = looker_sdk.init31()
-    json_file_path = os.path.join(PARENT_PATH, json_filename)
-    query = import_json(json_file_path)
-    query_name = list(query.keys())[0]
+    query_name, query_body = extract_query_details(json_filename)
     file_name = f"looker_{query_name}_{NOW}"
-    this_query = query[query_name]
-    body = this_query.get("body")
-    model = body.get("model")
-    fields = body.get("fields")
-    filters = body.get("filters")
-    sorts = body.get("sorts")
-    datetime_index = body.get("datetime")
-    view = body.get("view")
+    model = query_body.get("model")
+    fields = query_body.get("fields")
+    filters = query_body.get("filters")
+    sorts = query_body.get("sorts")
+    datetime_index = query_body.get("datetime")
+    view = query_body.get("view")
     ## if the filter already exists, dont run it
     ## if there's no datetime, don't run it
     if not (datetime_index is None or filters.get(datetime_index) is not None):
         date_filter = find_last_date(query_name, datetime_index)
+        if date_filter is None:
+            sys.exit(0)
         filters[datetime_index] = f"{date_filter}"
 
     ## hit the Looker API

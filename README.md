@@ -1,10 +1,8 @@
-# Project Title
+# Looker Metadata Extraxtor
 
 This project takes a JSON file of information about a Looker query and runs it on a Looker instance and sends the results to an S3 bucket.
 
 ## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
 
@@ -15,7 +13,7 @@ In addition to AWS creds, bucket name should be an enviroment variable "bucket_n
 ### Installing
 
 ```
-pip install <the package once it's ready>
+pip install extract-looker-metadata
 ```
 
 * Fill out either the looker.ini or stored your Looker credentials as enviroment variables
