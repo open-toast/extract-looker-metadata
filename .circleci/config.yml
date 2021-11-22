@@ -13,7 +13,7 @@ jobs:
       - checkout
       - run:
           name: Install Python
-          command: pip install python==3.6
+          command: pip install python>3.0,<3.8
       - run:
           name: Create package distribution
           command: python setup.py sdist
