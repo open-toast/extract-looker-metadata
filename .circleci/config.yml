@@ -17,6 +17,10 @@ jobs:
             sudo pip install pipenv
             pipenv install
       - run:
+          name: Install pytest
+          command: |
+            sudo pip install pytest
+      - run:
           name: Create package distribution
           command: python setup.py sdist
       - persist_to_workspace:
