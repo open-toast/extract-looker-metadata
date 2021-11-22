@@ -18,8 +18,10 @@ jobs:
             pipenv install
       - run:
           name: Install pytest
-          command: |
-            sudo pip install pytest
+          command: sudo pip install pytest
+        - run:
+          name: Install looker_sdk
+          command: sudo pip install looker_sdk
       - run:
           name: Create package distribution
           command: python setup.py sdist
