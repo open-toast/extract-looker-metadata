@@ -18,7 +18,7 @@ jobs:
             pipenv install
       - run:
           name: Install depedencies
-          command: sudo pip install requirements.txt
+          command: sudo pip install -r requirements.txt
       - run:
           name: Create package distribution
           command: python setup.py sdist
