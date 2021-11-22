@@ -13,7 +13,7 @@ In addition to AWS creds, bucket name should be an enviroment variable "bucket_n
 ### Installing
 
 ```
-pip install looker_ingestion
+python -m pip install looker_ingestion
 ```
 
 * Fill out either the looker.ini or stored your Looker credentials as enviroment variables
