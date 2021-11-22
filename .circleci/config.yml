@@ -40,14 +40,14 @@ jobs:
   #         name: Upload package
   #         command: build-scripts/upload-project.sh
 
-workflows:
-  version: 2
-  build-pypi:
-    jobs:
-      - build
-      - pypi:
-          requires:
-            - build
-          filters:
-            branches:
-              only: main
+# workflows:
+  # version: 2
+  # build-pypi:
+  #   jobs:
+  #     - build
+  #     - pypi:
+  #         requires:
+  #           - build
+  #         filters:
+  #           branches:
+  #             only: main
