@@ -19,7 +19,7 @@ jobs:
       - run:
           name: Install pytest
           command: sudo pip install pytest
-        - run:
+      - run:
           name: Install looker_sdk
           command: sudo pip install looker_sdk
       - run:
