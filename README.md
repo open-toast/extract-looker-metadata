@@ -13,7 +13,7 @@ In addition to AWS creds, bucket name should be an enviroment variable "bucket_n
 ### Installing
 
 ```
-pip install extract-looker-metadata
+pip install looker_ingestion
 ```
 
 * Fill out either the looker.ini or stored your Looker credentials as enviroment variables
@@ -23,14 +23,14 @@ pip install extract-looker-metadata
 You can use the function directly:
 
 ```
-import extract_looker_metadata
+from looker_ingestion import sync_data
 
 sync_data.extract_data('query_history_hourly.json')
 ```
 
 You can call the function as part of an Airflow task:
 ```
-import extract_looker_metadata
+from looker_ingestion import sync_data
 from airflow.operators.python_operator import PythonOperator
 
 with DAG(
@@ -40,7 +40,7 @@ with DAG(
 ) as dag:
     RUN_CUSTOM_HISTORY_WEEKLY_QUERIES = PythonOperator(
         task_id="run_custom_history_weekly_queries",
-        python_callable=extract_data,
+        python_callable=sync_data.extract_data,
         op_kwargs={'json_filename': 'weekly_query_history.json'}
     )
 
