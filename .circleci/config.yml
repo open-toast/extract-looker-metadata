@@ -23,6 +23,9 @@ jobs:
           root: dist
           paths:
             - .
+      - run:
+          name: Run tests
+          command: python -m pytest looker_ingestion/tests/test_*.py
 
   pypi:
     <<: *defaults
