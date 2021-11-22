@@ -30,24 +30,24 @@ jobs:
           name: Run tests
           command: python -m pytest tests/test_*.py
 
-  # pypi:
-  #   <<: *defaults
-  #   steps:
-  #     - checkout
-  #     - attach_workspace:
-  #         at: dist
-  #     - run:
-  #         name: Upload package
-  #         command: build-scripts/upload-project.sh
+  pypi:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: dist
+      - run:
+          name: Upload package
+          command: build-scripts/upload-project.sh
 
-# workflows:
-  # version: 2
-  # build-pypi:
-  #   jobs:
-  #     - build
-  #     - pypi:
-  #         requires:
-  #           - build
-  #         filters:
-  #           branches:
-  #             only: main
+workflows:
+  version: 2
+  build-pypi:
+    jobs:
+      - build
+      - pypi:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
