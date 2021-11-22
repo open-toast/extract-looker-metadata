@@ -4,7 +4,7 @@ setup(
     name='looker_ingestion',
     version='0.0.1',
     description='Extracts adhoc queries from the Looker API to S3',
-    py_modules=['sync_data'],
+    packages=find_packages(),
     install_requires=[
         'boto3',
         'looker_sdk'
