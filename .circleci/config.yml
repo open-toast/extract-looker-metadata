@@ -1,56 +1,45 @@
-version: 2.1
+# .circleci/config.yml
+defaults: &defaults
+  docker:
+    - image: continuumio/miniconda3:latest
+  working_directory: ~/repo
+
+version: 1
 jobs:
-  build_test:
-    docker:
-      - image: circleci/python:3.6.4
-    steps:
-      - checkout 
-      - run:
-          command: |  # create whl and use pipenv to install dependencies
-            python setup.py sdist bdist_wheel
-            sudo pip install pipenv
-            pipenv install dist/looker_ingestion-0.0.2-py3-none-any.whl
-            pipenv install pytest
-      - run:
-          command: |  # Run test suite
-            pipenv run pytest
-  test_pypi_publish:
-    docker:
-      - image: circleci/python:3.6.4
+
+  build:
+    <<: *defaults
     steps:
       - checkout
       - run:
-          command: |  # create whl, install twine and publish to Test PyPI
-            python setup.py sdist bdist_wheel
-            sudo pip install pipenv
-            pipenv install twine
-            pipenv run twine upload --repository testpypi dist/*
-  pypi_publish:
-    docker:
-      - image: circleci/python:3.6.4
-    steps:
-      - checkout  # checkout source code to working directory
+          name: Install Python
+          command: conda install python=3.6
       - run:
-          command: |  # create whl, install twine and publish to PyPI
-            python setup.py sdist bdist_wheel
-            sudo pip install pipenv
-            pipenv install twine
-            pipenv run twine upload dist/*
+          name: Create package distribution
+          command: python setup.py sdist
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - .
+
+  pypi:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: dist
+      - run:
+          name: Upload package
+          command: build-scripts/upload-project.sh
+
 workflows:
-  build_test_publish:
+  version: 2
+  build-pypi:
     jobs:
-      - build_test
-      - test_pypi_publish:
+      - build
+      - pypi:
           requires:
-            - build_test
+            - build
           filters:
             branches:
-              only:
-                - develop
-      - pypi_publish:
-          requires:
-            - build_test
-          filters:
-            branches:
-              only:
-                - main
+              only: main
