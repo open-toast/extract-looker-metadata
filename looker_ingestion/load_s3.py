@@ -8,9 +8,7 @@ import json
 import logging
 import csv
 
-BUCKET_NAME = os.getenv("bucket_name")
-
-def load_object_to_s3(data, local_file_name, output_filename, s3_bucket=BUCKET_NAME, 
+def load_object_to_s3(data, local_file_name, output_filename, s3_bucket, 
                     aws_server_public_key=None, aws_server_secret_key=None):
     """ This saves a json, list of json, or CSV object
     locally to a temporary file and then uploads it to the S3 bucket"""
@@ -51,7 +49,7 @@ def load_s3(s3_bucket, input_filename, output_filename, s3_storage):
     s3:// {s3_bucket} as {output_filename}"
     )
 
-def find_existing_data(prefix, s3_bucket=BUCKET_NAME, aws_server_public_key=None, aws_server_secret_key=None):
+def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server_secret_key=None):
     """ Given a key within an S3 buckets, reads through all files and returns content"""
     
     if aws_server_public_key is not None:

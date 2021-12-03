@@ -12,7 +12,8 @@ from .load_s3 import load_object_to_s3, find_existing_data
 
 PARENT_PATH = os.path.dirname(__file__)
 NOW = str(time.time()).split(".")[0]
-
+## change to aws_storage_bucket_name
+BUCKET_NAME = os.getenv("bucket_name")
 
 def extract_query_details(json_filename):
     """ Gets the query/body for each query from the JSON file """
@@ -60,7 +61,7 @@ def find_date_range(start_time):
     return [start_time, end_time]
 
 
-def extract_data(json_filename, aws_server_public_key=None, aws_server_secret_key=None):
+def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_public_key=None, aws_server_secret_key=None):
     """ Read in the JSON file, iterate through query info,
     run the queries, and write to s3. If no data, don't do SQL parts
     It takes one argument: the filename of the JSON file in this folder
@@ -89,7 +90,7 @@ def extract_data(json_filename, aws_server_public_key=None, aws_server_secret_ke
         ## if the filter already exists, dont run it
         ## if there's no datetime, don't run it
         if not (datetime_index is None or filters.get(datetime_index) is not None):
-            date_filter = find_last_date(query_name, datetime_index, aws_server_public_key, aws_server_secret_key)
+            date_filter = find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
             filters[datetime_index] = f"{date_filter}"
 
         ## hit the Looker API
@@ -119,7 +120,7 @@ def extract_data(json_filename, aws_server_public_key=None, aws_server_secret_ke
                 f"""Hit the limit of {row_limit} rows, try again a smaller window than {date_filter} """
             )
         else:
-            load_object_to_s3(data, file_name, f"looker/{query_name}/{file_name}", aws_server_public_key, aws_server_secret_key)
+            load_object_to_s3(data, file_name, f"looker/{query_name}/{file_name}", aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Process some integers.')
@@ -129,9 +130,11 @@ def parse_args():
                     help='AWS public key (not needed if stored as env variables)')
     parser.add_argument('--aws_server_secret_key', dest='aws_server_secret_key',
                     help='AWS secret key (not needed if stored as env variables)')
+    parser.add_argument('--aws_storage_bucket_name', dest='aws_storage_bucket_name',
+                    help='AWS bucket name (not needed if stored as env variables)')
 
     return parser.parse_args()
 
 if __name__ == '__main__':
     args = parse_args()
-    extract_data(args.json_file, args.aws_server_public_key, args.aws_server_secret_key)
+    extract_data(args.json_file, args.aws_storage_bucket_name, args.aws_server_public_key, args.aws_server_secret_key)
