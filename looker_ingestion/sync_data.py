@@ -6,6 +6,7 @@ import os
 import logging
 from datetime import timedelta, datetime
 import argparse
+import sys
 
 import looker_sdk
 from load_s3 import load_object_to_s3, find_existing_data
@@ -43,9 +44,7 @@ def find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_serv
     else:
         times = []
         times = find_date_range(last_date)
-        if times == -1:
-            return
-        elif times is None or times == []:
+        if times is None or times == []:
             raise ValueError("No valid time range found")
         return f"""{times[0].strftime('%Y-%m-%d %H:%M:%S')} 
                     to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
@@ -58,7 +57,7 @@ def find_date_range(start_time):
     ## given it a ten minute time difference
     if hours_old <= 0.16:
         logging.warning("All up to date, not running any data")
-        return -1
+        sys.exit(0)
     hours_old = min(int(hours_old) + 1, 24)
     end_time = start_time + timedelta(hours=hours_old, minutes=0)
     logging.info(f"{start_time} to {end_time}")
