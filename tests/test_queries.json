@@ -1,7 +1,7 @@
 [{
     "name": "test_query_name",
     "model": "test_model",
-    "view": "history",
+    "explore": "history",
     "fields": [
         "query.id",
         "history.created_time"
@@ -23,7 +23,7 @@
 {
     "name": "test_query_name_2",
     "model": "test_model_2",
-    "view": "history",
+    "explore": "history",
     "fields": [
         "query.id",
         "history.created_time"

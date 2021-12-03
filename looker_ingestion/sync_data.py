@@ -78,7 +78,7 @@ def extract_data(json_filename):
         datetime_index = metadata.get("datetime")
         row_limit = query_body.get("limit")
         result_format = metadata.get("result_format") or "json"
-        view = query_body.get("view")
+        view = query_body.get("explore")
 
         if result_format not in ["json", "csv"]:
             raise ValueError("Invalid instance type; please use only json or csv")

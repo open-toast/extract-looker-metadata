@@ -1,7 +1,7 @@
 [{
     "name": "query_history_hourly",
     "model": "i__looker",
-    "view": "history",
+    "explore": "history",
     "fields": [
         "query.id",
         "history.created_time",

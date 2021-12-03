@@ -1,6 +1,9 @@
 # Looker Metadata Extractor
 
-This project takes a JSON file of information about a Looker query and runs it on a Looker instance and sends the results to an S3 bucket.
+This project takes a JSON file of information about a Looker query and runs it on a Looker instance and sends the results to an S3 bucket. This uses the Looker SDK to query the Looker API, translating to this call:
+
+`POST/api/3.1/queries/run/{result_format}`
+
 
 ## Getting Started
 
@@ -19,6 +22,7 @@ python -m pip install looker_ingestion
 * Fill out either the looker.ini or store your Looker credentials as environment variables
 * Ensure you have credentials that can access your S3 bucket
 * Store both the creds and the bucket name as an environmental variable
+* You can also pass your AWS credentials on the command line instead of using enviromental variables
 
 You can use the function directly:
 
@@ -46,6 +50,28 @@ with DAG(
     )
 ```
 
+You can also call this on the command line:
+
+```bash
+COMMAND LINE EXAMPLE
+```
+
+### Terminology
+
+The following Looker terms are referenced throughout the project:
+
+* Model and View
+** A model refers to a file in Looker that defines a single database connection and a collection of Explores to run on that database
+** More information [here](https://docs.looker.com/data-modeling/getting-started/model-development)
+* View
+** A view is a file in Looker of a single database table or a derived table
+** A view is not referenced explicitly in this project; instead, field names begin with their view name
+** More information [here](https://docs.looker.com/data-modeling/getting-started/model-development#view_files)
+* Explore
+** Explores exist within a model and can be one to many views joined
+** This called a view throughout the Looker database/API
+** More information [here](https://docs.looker.com/reference/explore-params/explore)
+
 ### Adding a custom extraction
 
 If there are unavailable objects or another prohibition from getting data, you can write a query against i_looker and extract data with that query. You can also query any other model.
@@ -62,6 +88,7 @@ The explores available in the i__looker model are:
 This query is generated using a JSON object. Each file can have one or many JSON objects.
 
 An example JSON file looks like this:
+
 ```json
 PUT EXAMPLE WHEN DONE
 ```
@@ -70,9 +97,9 @@ The fields to fill out in the JSON file are:
 
 **name**: whatever you want to call this query; this will be used to store and reference this specific query in S3
 
-**model**: the name of the Looker model you want to extract from, should be in the URL of your query
+**model**: the name of the Looker model you want to extract from, should be in the URL of your query, e.g. i__looker
 
-**view**: the name of the explore you’re using, circled in red. yes, they call an explore a view throughout all the Looker API / database.
+**explore**: the name of the explore you’re using to generate this query, should be in the URL of your query,e.g. history
 
 **fields**: a list of the fields you want in the form <table name>.<field name>. Note to use the names from SQL which may vary from the sidebar. In addition, you can't do calculations/custom fields unless they’re already made.
 
@@ -126,3 +153,4 @@ This project is licensed under the Apache 2 License - see the [LICENSE](LICENSE)
 ## Acknowledgments
 
 The idea to use a custom query to get Looker metadata came from [Singer Looker Tap](https://github.com/singer-io/tap-looker)
+Made possible by the [Looker SDK](https://github.com/looker-open-source/sdk-codegen)

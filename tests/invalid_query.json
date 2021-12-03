@@ -1,7 +1,7 @@
 [{
     "name": "teste_invalid_query",
     "model": "test_model",
-    "view": "history",
+    "explore": "history",
     "fields": [
         "query.id",
         "history.created_time"
