@@ -98,7 +98,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         ## hit the Looker API
         write_query = looker_sdk.models.WriteQuery(
             model=query_body["model"],
-            view=query_body["explore"],
+            view="cats",
             fields=query_body["fields"],
             filters=filters,
             sorts=query_body.get("sorts"),
@@ -106,6 +106,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         )
 
         query_run = sdk.run_inline_query(result_format, write_query)
+        print(query_run)
 
         if query_run == [] or query_run is None:
             logging.error(
