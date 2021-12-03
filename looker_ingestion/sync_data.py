@@ -67,42 +67,47 @@ def extract_data(json_filename):
     that holds the query info"""
 
     sdk = looker_sdk.init31()
-    query_name, query_body = extract_query_details(json_filename)
-    file_name = f"looker_{query_name}_{NOW}"
-    model = query_body.get("model")
-    fields = query_body.get("fields")
-    filters = query_body.get("filters")
-    sorts = query_body.get("sorts")
-    metadata = query_body.get("metadata")
-    datetime_index = metadata.get("datetime")
-    row_limit = metadata.get("row_limit")
-    result_format = metadata.get("result_format")
-    view = query_body.get("view")
-    
-    ## if the filter already exists, dont run it
-    ## if there's no datetime, don't run it
-    if not (datetime_index is None or filters.get(datetime_index) is not None):
-        date_filter = find_last_date(query_name, datetime_index)
-        filters[datetime_index] = f"{date_filter}"
+    queries = extract_query_details(json_filename)
+    for query in queries:
+        query_name = query["name"]
+        query_body = query["body"]
+        file_name = f"looker_{query_name}_{NOW}"
+        model = query_body.get("model")
+        fields = query_body.get("fields")
+        filters = query_body.get("filters")
+        sorts = query_body.get("sorts")
+        metadata = query_body.get("metadata")
+        datetime_index = metadata.get("datetime")
+        row_limit = metadata.get("row_limit")
+        result_format = metadata.get("result_format") or "json"
+        view = query_body.get("view")
+        
+        ## if the filter already exists, dont run it
+        ## if there's no datetime, don't run it
+        if not (datetime_index is None or filters.get(datetime_index) is not None):
+            date_filter = find_last_date(query_name, datetime_index)
+            filters[datetime_index] = f"{date_filter}"
 
-    ## hit the Looker API
-    write_query = looker_sdk.models.WriteQuery(
-        model=model, view=view, fields=fields, filters=filters, sorts=sorts, limit=row_limit
-    )
-    query_run = sdk.run_inline_query(result_format, write_query)
-    data = json.loads(query_run)
+        ## hit the Looker API
+        write_query = looker_sdk.models.WriteQuery(
+            model=model, view=view, fields=fields, filters=filters, sorts=sorts, limit=row_limit
+        )
+        # if result_format not in ["json", "csv"]:
+        #     raise ValueError("Please enter a valid return format")
+        query_run = sdk.run_inline_query(result_format, write_query)
+        data = json.loads(query_run)
 
-    if data == []:
-        logging.error(
-            f"No data returned when attempting to fetch Looker query history for {date_filter}"
-        )
-    elif data[0].get("looker_error") is not None:
-        logging.error(
-            f"""Looker query history fetch failed with {data[0].get("looker_error")}"""
-        )
-    elif len(data) == row_limit:
-        logging.error(
-            f"""Hit the limit of {row_limit} rows, try again a smaller window than {date_filter} """
-        )
-    else:
-        load_s3_json(data, file_name, f"looker/{query_name}/{file_name}")
+        if data == []:
+            logging.error(
+                f"No data returned when attempting to fetch Looker query history for {date_filter}"
+            )
+        elif data[0].get("looker_error") is not None:
+            logging.error(
+                f"""Looker query history fetch failed with {data[0].get("looker_error")}"""
+            )
+        elif len(data) == row_limit:
+            logging.error(
+                f"""Hit the limit of {row_limit} rows, try again a smaller window than {date_filter} """
+            )
+        else:
+            load_s3_json(data, file_name, f"looker/{query_name}/{file_name}")

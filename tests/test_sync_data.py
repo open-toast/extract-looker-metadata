@@ -10,12 +10,12 @@ from looker_ingestion import sync_data
 from datetime import datetime, timedelta
 
 def test_extract_query_details():
-    test_query_name, test_query_body = sync_data.extract_query_details("../tests/test_query.json")
+    test_query = sync_data.extract_query_details("../tests/test_query.json")
 
-    assert test_query_name == "test_query_name"
-    assert test_query_body["model"] == "test_model"
-    assert test_query_body["sorts"][1] == "sort_by_name"
-
+    assert test_query["name"] == "test_query_name"
+    assert test_query["body"]["model"] == "test_model"
+    assert test_query["body"]["sorts"][1] == "sort_by_name"
+    assert test_query["metadata"]["result_format"] == "json"
 
 def test_find_date_range():
     def convert_string(actual_datetime):
