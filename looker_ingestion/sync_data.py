@@ -123,8 +123,8 @@ def extract_data(json_filename):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('integers', metavar='N', type=int, nargs='+',
-                    help='an integer for the accumulator')
+    parser.add_argument('--json_file', type=str,
+                    help='the JSON file location that contains the data to run the Looker query or queries')
     parser.add_argument('--sum', dest='accumulate', action='store_const',
                     const=sum, default=max,
                     help='sum the integers (default: find the max)')

@@ -10,7 +10,8 @@ import csv
 
 BUCKET_NAME = os.getenv("bucket_name")
 
-def load_object_to_s3(data, local_file_name, output_filename, s3_bucket=BUCKET_NAME):
+def load_object_to_s3(data, local_file_name, output_filename, s3_bucket=BUCKET_NAME, 
+                    aws_server_public_key=None, aws_server_secret_key=None):
     """ This saves a json, list of json, or CSV object
     locally to a temporary file and then uploads it to the S3 bucket"""
 
@@ -24,25 +25,41 @@ def load_object_to_s3(data, local_file_name, output_filename, s3_bucket=BUCKET_N
             fp = csv.DictWriter(f, data[0].keys())
             fp.writeheader()
             fp.writerows(data)
-    load_s3(s3_bucket, input_filename, output_filename)
+
+    if aws_server_public_key is not None:
+        session = create_session(aws_server_public_key, aws_server_secret_key)
+        s3_storage = session.resource("s3")
+    else:
+        s3_storage = boto3.resource("s3")
+
+    load_s3(s3_bucket, input_filename, output_filename, s3_storage)
     # remove temp directory if done
     if os._exists(temp_dir.name):
         shutil.rmtree(temp_dir.name)
 
+def create_session(aws_server_public_key, aws_server_secret_key):
+    return boto3.Session(
+        aws_access_key_id=aws_server_public_key,
+        aws_secret_access_key=aws_server_secret_key,
+    )
 
-def load_s3(s3_bucket, input_filename, output_filename):
+def load_s3(s3_bucket, input_filename, output_filename, s3_storage):
     """ Pushes file to S3. """
-
-    s3_storage = boto3.resource("s3")
     s3_storage.meta.client.upload_file(input_filename, s3_bucket, output_filename)
     logging.info(
         f"COMPLETE: {input_filename} loaded into \
     s3:// {s3_bucket} as {output_filename}"
     )
 
-def find_existing_data(prefix, s3_bucket=BUCKET_NAME):
+def find_existing_data(prefix, s3_bucket=BUCKET_NAME, aws_server_public_key=None, aws_server_secret_key=None):
     """ Given a key within an S3 buckets, reads through all files and returns content"""
-    s3_storage = boto3.resource("s3")
+    
+    if aws_server_public_key is not None:
+        session = create_session(aws_server_public_key, aws_server_secret_key)
+        s3_storage = session.resource("s3")
+    else:
+        s3_storage = boto3.resource("s3")
+
     my_bucket = s3_storage.Bucket(s3_bucket)
     json_objects = []
     for object_summary in my_bucket.objects.filter(Prefix=prefix):
