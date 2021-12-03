@@ -45,7 +45,7 @@ def find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_serv
         times = find_date_range(last_date)
         if times == -1:
             return
-        if times is None or times == []:
+        elif times is None or times == []:
             raise ValueError("No valid time range found")
         return f"""{times[0].strftime('%Y-%m-%d %H:%M:%S')} 
                     to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
