@@ -1,5 +1,7 @@
 import sys
 import os
+import pytest 
+
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 looker_ingestion_dir = os.path.join(parentdir, 'looker_ingestion')
@@ -9,15 +11,30 @@ sys.path.append(looker_ingestion_dir)
 from looker_ingestion import sync_data
 from datetime import datetime, timedelta
 
-def test_extract_query_details():
-    test_query = sync_data.extract_query_details("../tests/test_query.json")
 
-    assert test_query["name"] == "test_query_name"
-    assert test_query["model"] == "test_model"
-    assert test_query["sorts"][1] == "sort_by_name"
-    assert test_query["metadata"]["result_format"] == "json"
+def test_extract_data():
+    raise NotImplemented
+
+def test_extract_query_details():
+    """ Ensures that the script can read in a JSON file and produce the
+    right attributes from the JSON."""
+
+    test_query = sync_data.extract_query_details("../tests/test_queries.json")
+
+    assert test_query[0]["name"] == "test_query_name"
+    assert test_query[0]["model"] == "test_model"
+    assert test_query[0]["sorts"][1] == "sort_by_name"
+    assert test_query[0]["metadata"]["result_format"] == "json"
+    assert test_query[1]["metadata"]["result_format"] == "csv"
+    with pytest.raises(ValueError):
+         sync_data.extract_query_details("../tests/invalid_query.json")
+
 
 def test_find_date_range():
+    """
+    This test ensures that, given the right last date of data, the script will pick
+    the right range to query Looker with.
+    """
     def convert_string(actual_datetime):
         return actual_datetime.strftime('%Y-%m-%d %H:%M:%S')
 

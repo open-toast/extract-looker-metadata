@@ -1,0 +1,42 @@
+[{
+    "name": "test_query_name",
+    "model": "test_model",
+    "view": "history",
+    "fields": [
+        "query.id",
+        "history.created_time"
+    ],
+    "filters": {
+        "query.model": "-EMPTY",
+        "history.runtime": "NOT NULL",
+        "user.is_looker": "No"
+    },
+    "sorts": [
+        "sort_by_time",
+        "sort_by_name"
+    ],
+    "metadata": {
+        "result_format": "json",
+        "datetime": "history.created_time"
+    }
+},
+{
+    "name": "test_query_name_2",
+    "model": "test_model_2",
+    "view": "history",
+    "fields": [
+        "query.id",
+        "history.created_time"
+    ],
+    "filters": {
+        "query.model": "-EMPTY"
+    },
+    "sorts": [
+        "sort_by_name"
+    ],
+    "metadata": {
+        "result_format": "csv",
+        "datetime": "history.created_time"
+    }
+}
+]

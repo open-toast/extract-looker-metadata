@@ -1,5 +1,5 @@
 [{
-    "name": "test_query_name",
+    "name": "teste_invalid_query",
     "model": "test_model",
     "view": "history",
     "fields": [
@@ -16,7 +16,7 @@
         "sort_by_name"
     ],
     "metadata": {
-        "result_format": "json",
+        "result_format": "parquet",
         "datetime": "history.created_time"
     }
 }

@@ -59,6 +59,13 @@ The explores available in the i__looker model are:
 * Event Attribute
 * Field Usage
 
+This query is generated using a JSON object. Each file can have one or many JSON objects.
+
+An example JSON file looks like this:
+```json
+PUT EXAMPLE WHEN DONE
+```
+
 The fields to fill out in the JSON file are:
 
 **name**: whatever you want to call this query; this will be used to store and reference this specific query in S3
@@ -97,16 +104,6 @@ to run the tests:
 ```bash
 pytest tests/
 ```
-
-### test_extract_query_details
-
-This test ensures that the script can read in a JSON file and produce the
-right attributes from the JSON.
-
-### test_find_date_range
-
-This test ensures that, given the right last date of data, the script will pick
-the right range to query Looker with.
 
 ## Contributing
 
