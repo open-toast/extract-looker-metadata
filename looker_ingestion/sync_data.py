@@ -5,6 +5,7 @@ import json
 import os
 import logging
 from datetime import timedelta, datetime
+import argparse
 
 import looker_sdk
 from .load_s3 import load_object_to_s3, find_existing_data
@@ -67,18 +68,20 @@ def extract_data(json_filename):
 
     sdk = looker_sdk.init31()
     queries = extract_query_details(json_filename)
+    REQUIRED_KEYS = ["name", "model", "explore", "fields"]
     for query_body in queries:
+        
+        for key in REQUIRED_KEYS:
+            if query_body.get(key) is None:
+                raise KeyError(f"{key} is a mandatory element in the JSON")
+
         query_name = query_body["name"]
         file_name = f"looker_{query_name}_{NOW}"
-        model = query_body.get("model")
-        fields = query_body.get("fields")
         filters = query_body.get("filters")
-        sorts = query_body.get("sorts")
         metadata = query_body.get("metadata")
         datetime_index = metadata.get("datetime")
         row_limit = query_body.get("limit")
         result_format = metadata.get("result_format") or "json"
-        view = query_body.get("explore")
 
         if result_format not in ["json", "csv"]:
             raise ValueError("Invalid instance type; please use only json or csv")
@@ -91,11 +94,15 @@ def extract_data(json_filename):
 
         ## hit the Looker API
         write_query = looker_sdk.models.WriteQuery(
-            model=model, view=view, fields=fields, filters=filters, sorts=sorts, limit=row_limit,
+            model=query_body["model"],
+            view=query_body["explore"],
+            fields=query_body["fields"],
+            filters=filters,
+            sorts=query_body.get("sorts"),
+            limit=row_limit,
             force_production=True
         )
-        # if result_format not in ["json", "csv"]:
-        #     raise ValueError("Please enter a valid return format")
+
         query_run = sdk.run_inline_query(result_format, write_query)
         data = json.loads(query_run)
 
@@ -113,3 +120,14 @@ def extract_data(json_filename):
             )
         else:
             load_object_to_s3(data, file_name, f"looker/{query_name}/{file_name}")
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('integers', metavar='N', type=int, nargs='+',
+                    help='an integer for the accumulator')
+    parser.add_argument('--sum', dest='accumulate', action='store_const',
+                    const=sum, default=max,
+                    help='sum the integers (default: find the max)')
+
+    args = parser.parse_args()
+
