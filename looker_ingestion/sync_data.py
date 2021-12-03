@@ -106,6 +106,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         )
 
         query_run = sdk.run_inline_query(result_format, write_query)
+        print(query_run)
         data = json.loads(query_run)
 
         if data == []:
