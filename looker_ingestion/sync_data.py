@@ -22,14 +22,14 @@ def extract_query_details(json_filename):
     return queries
 
 
-def find_last_date(query_name, datetime_index):
+def find_last_date(query_name, datetime_index, aws_server_public_key, aws_server_secret_key):
     """ For the relevant file path, find the date to start extracting data with
     Default: today """
 
     ## if there's no data, get the last day
     first_date = "1 day"
     ## get the largest query time in the data warehouse
-    date_object = find_existing_data(f"looker/{query_name}/looker_{query_name}")
+    date_object = find_existing_data(f"looker/{query_name}/looker_{query_name}", aws_server_public_key, aws_server_secret_key)
     last_date = "1990-01-01 00:00:00"
     for last_date_object in date_object:
         for row in last_date_object:
@@ -60,7 +60,7 @@ def find_date_range(start_time):
     return [start_time, end_time]
 
 
-def extract_data(json_filename):
+def extract_data(json_filename, aws_server_public_key=None, aws_server_secret_key=None):
     """ Read in the JSON file, iterate through query info,
     run the queries, and write to s3. If no data, don't do SQL parts
     It takes one argument: the filename of the JSON file in this folder
@@ -89,7 +89,7 @@ def extract_data(json_filename):
         ## if the filter already exists, dont run it
         ## if there's no datetime, don't run it
         if not (datetime_index is None or filters.get(datetime_index) is not None):
-            date_filter = find_last_date(query_name, datetime_index)
+            date_filter = find_last_date(query_name, datetime_index, aws_server_public_key, aws_server_secret_key)
             filters[datetime_index] = f"{date_filter}"
 
         ## hit the Looker API
@@ -119,15 +119,19 @@ def extract_data(json_filename):
                 f"""Hit the limit of {row_limit} rows, try again a smaller window than {date_filter} """
             )
         else:
-            load_object_to_s3(data, file_name, f"looker/{query_name}/{file_name}")
+            load_object_to_s3(data, file_name, f"looker/{query_name}/{file_name}", aws_server_public_key, aws_server_secret_key)
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--json_file', dest='json_file', type=str, required=True,
+                    help='the JSON file location that contains the data to run the Looker query or queries')
+    parser.add_argument('--aws_server_public_key', dest='aws_server_public_key',
+                    help='AWS public key (not needed if stored as env variables)')
+    parser.add_argument('--aws_server_secret_key', dest='aws_server_secret_key',
+                    help='AWS secret key (not needed if stored as env variables)')
+
+    return parser.parse_args()
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--json_file', type=str,
-                    help='the JSON file location that contains the data to run the Looker query or queries')
-    parser.add_argument('--sum', dest='accumulate', action='store_const',
-                    const=sum, default=max,
-                    help='sum the integers (default: find the max)')
-
-    args = parser.parse_args()
-
+    args = parse_args()
+    extract_data(args.json_file, args.aws_server_public_key, args.aws_server_secret_key)
