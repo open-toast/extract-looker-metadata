@@ -36,6 +36,7 @@
     },
     "metadata": {
             "datetime": "history.created_time",
-            "row_limit": 60000
+            "row_limit": 60000,
+            "result_format": "json"
     }
 }]
