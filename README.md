@@ -103,8 +103,19 @@ the right range to query Looker with.
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct,
 and the process for submitting pull requests to us.
 
-Project email: CREATE GOOGLE GROUP HERE
+
+## Versioning
+
+See [CHANGELOG.md](CHANGELOG.md) for a history of changes to this repo.
+
+## Authors
+
+[Alisa Aylward](mailto:alisa.aylward@toasttab.com)
 
 ## License
 
 This project is licensed under the Apache 2 License - see the [LICENSE](LICENSE) file for details
+
+## Acknowledgments
+
+The idea to use a custom query to get Looker metadata came from [Singer Looker Tap](https://github.com/singer-io/tap-looker)
