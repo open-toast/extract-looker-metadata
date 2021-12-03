@@ -20,7 +20,7 @@ def load_object_to_s3(data, local_file_name, output_filename, s3_bucket,
         if isinstance(data, dict) or isinstance(data, list):
             json.dump(data, f)
         else:
-            fp = csv.DictWriter(f, data[0].keys())
+            fp = csv.DictWriter(f, data[0])
             fp.writeheader()
             fp.writerows(data)
 
