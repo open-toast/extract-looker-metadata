@@ -69,7 +69,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
 
     sdk = looker_sdk.init31()
     queries = extract_query_details(json_filename)
-    REQUIRED_KEYS = ["name", "model", "explore", "fields"]
+    REQUIRED_KEYS = ["name", "model", "explore", "fields", "metadata"]
     for query_body in queries:
         
         for key in REQUIRED_KEYS:
@@ -77,15 +77,14 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
                 raise KeyError(f"{key} is a mandatory element in the JSON")
 
         query_name = query_body["name"]
-        file_name = f"looker_{query_name}_{NOW}"
+        result_format = metadata.get("result_format") or "json"
+        if result_format not in ["json", "csv"]:
+            raise ValueError("Invalid instance type; please use only json or csv")
+        file_name = f"looker_{query_name}_{NOW}.{result_format}"
         filters = query_body.get("filters")
         metadata = query_body.get("metadata")
         datetime_index = metadata.get("datetime")
         row_limit = query_body.get("limit")
-        result_format = metadata.get("result_format") or "json"
-
-        if result_format not in ["json", "csv"]:
-            raise ValueError("Invalid instance type; please use only json or csv")
     
         ## if the filter already exists, dont run it
         ## if there's no datetime, don't run it
