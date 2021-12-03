@@ -137,4 +137,8 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    extract_data(args.json_file, args.aws_storage_bucket_name, args.aws_server_public_key, args.aws_server_secret_key)
+    if args.aws_server_public_key is not None:
+        extract_data(args.json_file, args.aws_storage_bucket_name, args.aws_server_public_key, args.aws_server_secret_key)
+    else:
+        extract_data(args.json_file)
+

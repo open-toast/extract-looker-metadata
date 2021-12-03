@@ -57,7 +57,7 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
         s3_storage = session.resource("s3")
     else:
         s3_storage = boto3.resource("s3")
-
+    print(s3_bucket)
     my_bucket = s3_storage.Bucket(s3_bucket)
     json_objects = []
     for object_summary in my_bucket.objects.filter(Prefix=prefix):
