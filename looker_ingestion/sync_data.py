@@ -106,23 +106,21 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         )
 
         query_run = sdk.run_inline_query(result_format, write_query)
-        print(query_run)
-        data = json.loads(query_run)
 
-        if data == []:
+        if query_run == [] or query_run is None:
             logging.error(
                 f"No data returned when attempting to fetch Looker query history for {date_filter}"
             )
-        elif data[0].get("looker_error") is not None:
+        elif query_run[0].get("looker_error") is not None:
             logging.error(
-                f"""Looker query history fetch failed with {data[0].get("looker_error")}"""
+                f"""Looker query history fetch failed with {query_run[0].get("looker_error")}"""
             )
-        elif len(data) == row_limit:
+        elif len(query_run) == row_limit:
             logging.error(
                 f"""Hit the limit of {row_limit} rows, try again a smaller window than {date_filter} """
             )
         else:
-            load_object_to_s3(data, file_name, f"looker/{query_name}/{file_name}", aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
+            load_object_to_s3(query_run, file_name, f"looker/{query_name}/{file_name}", aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Process some integers.')
