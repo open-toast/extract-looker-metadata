@@ -13,8 +13,8 @@ def test_extract_query_details():
     test_query = sync_data.extract_query_details("../tests/test_query.json")
 
     assert test_query["name"] == "test_query_name"
-    assert test_query["body"]["model"] == "test_model"
-    assert test_query["body"]["sorts"][1] == "sort_by_name"
+    assert test_query["model"] == "test_model"
+    assert test_query["sorts"][1] == "sort_by_name"
     assert test_query["metadata"]["result_format"] == "json"
 
 def test_find_date_range():

@@ -1,21 +1,20 @@
 [{
     "name": "test_query_name",
-    "body": {
-        "model": "test_model",
-        "view": "history",
-        "fields": [
-            "query.id",
-            "history.created_time"
-        ],
-        "filters": {
-            "query.model": "-EMPTY",
-            "history.runtime": "NOT NULL",
-            "user.is_looker": "No"
-        },
-        "sorts": [
-            "sort_by_time",
-            "sort_by_name"
-        ]},
+    "model": "test_model",
+    "view": "history",
+    "fields": [
+        "query.id",
+        "history.created_time"
+    ],
+    "filters": {
+        "query.model": "-EMPTY",
+        "history.runtime": "NOT NULL",
+        "user.is_looker": "No"
+    },
+    "sorts": [
+        "sort_by_time",
+        "sort_by_name"
+    ],
     "metadata": {
         "result_format": "json",
         "datetime": "history.created_time"
