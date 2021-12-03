@@ -1,4 +1,3 @@
-<!-- Might be worth running an auto format on this to split lines and make it a bit easier to read without scrolling left and right. Intellij will format it nicely. -->
 # Looker Metadata Extractor
 
 This project takes a JSON file of information about a Looker query and runs it on a Looker instance and sends the results to an S3 bucket.
@@ -62,21 +61,32 @@ The explores available in the i__looker model are:
 
 The fields to fill out in the JSON file are:
 
-**query_history_weekly**: whatever you want to call this query, it will definitely be the table name so choose wisely
+**name**: whatever you want to call this query; this will be used to store and reference this specific query in S3
 
-**body.model**: the name of the model you want to extract from, should be in the URL of your query
+**model**: the name of the Looker model you want to extract from, should be in the URL of your query
 
-**body.view**: the name of the explore you’re using, circled in red. yes, they call an explore a view throughout all the Looker API / database.
+**view**: the name of the explore you’re using, circled in red. yes, they call an explore a view throughout all the Looker API / database.
 
-**body.fields**: a list of the fields you want in the form <table name>.<field name>. Note to use the names from SQL which may vary from the sidebar. In addition, you can't do calculations/custom fields unless they’re already made.
+**fields**: a list of the fields you want in the form <table name>.<field name>. Note to use the names from SQL which may vary from the sidebar. In addition, you can't do calculations/custom fields unless they’re already made.
 
-**body.filters**: A list of filters you want to see. Use this format
+**filters**: A dictionary of filters you want to see. Use this format:
 
-**body.sorts**: Not shown, but a list of fields you want to sort by. ASC by default, you can also put DESC
+```python
+{"field": "filter_expression",
+"field2": "filter_expression2"}
+```
 
-**datetime**: This is effectively “what field do you want to use so we can extract only new data?” Extracting all data is probably unrealistic because of time and row limits. If this field also exists in your filters, we will defer to the filter value. If not, we will calculate the next chunk of data we can bring in
+For the format of Looker filters, see this [page](https://docs.looker.com/reference/filter-expressions)
+
+**sorts**: A list of fields you want to sort by. ASC by default, you can also put DESC to sort by descending
+
+**limits**: The row limit enforced on the query. If the row limit is reached, the data will still return, but only up to the row limit amount.
+
+**metadata.datetime**: This is effectively “what field do you want to use so we can extract only new data?” Extracting all data is probably unrealistic because of time and row limits. If this field also exists in your filters, we will defer to the filter value. If not, we will calculate the next chunk of data we can bring in
 
 In order to do incremental, we find the MAX(datetime) found in S3 and then add up to 24 hours to that, stopping if we reach the current time. We also have a row limit of 60000 and a time limit of 5 minutes (adjustable as a Looker env variable). If it hits the row limit, you get all the data it has pulled so far (a good reason to use sorts), but if you hit the timeout limit you get nothing. For this reason, we like to keep the increments small.
+
+**metadata.result_format**: The format that the results can be retrieved as, all supported are listed [here](https://docs.looker.com/reference/api-and-integration/api-reference/v3.1/query). However, because of the original use of this project is for databases, this project only supports json and csv.
 
 If there is an error or no new rows are found or the row limit is reached, the script will log an error.
 

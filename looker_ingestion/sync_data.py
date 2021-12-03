@@ -5,10 +5,9 @@ import json
 import os
 import logging
 from datetime import timedelta, datetime
-import sys
 
 import looker_sdk
-from .load_s3 import load_s3_json, read_json
+from .load_s3 import load_object_to_s3, find_existing_data
 
 PARENT_PATH = os.path.dirname(__file__)
 NOW = str(time.time()).split(".")[0]
@@ -29,7 +28,7 @@ def find_last_date(query_name, datetime_index):
     ## if there's no data, get the last day
     first_date = "1 day"
     ## get the largest query time in the data warehouse
-    date_object = read_json(f"looker/{query_name}/looker_{query_name}")
+    date_object = find_existing_data(f"looker/{query_name}/looker_{query_name}")
     last_date = "1990-01-01 00:00:00"
     for last_date_object in date_object:
         for row in last_date_object:
@@ -41,7 +40,7 @@ def find_last_date(query_name, datetime_index):
         times = []
         times = find_date_range(last_date)
         if times is None or times == []:
-            sys.exit()
+            raise ValueError("No valid time range found")
         return f"""{times[0].strftime('%Y-%m-%d %H:%M:%S')} 
                     to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
 
@@ -80,7 +79,10 @@ def extract_data(json_filename):
         row_limit = query_body.get("limit")
         result_format = metadata.get("result_format") or "json"
         view = query_body.get("view")
-        
+
+        if result_format not in ["json", "csv"]:
+            raise ValueError("Invalid instance type; please use only json or csv")
+    
         ## if the filter already exists, dont run it
         ## if there's no datetime, don't run it
         if not (datetime_index is None or filters.get(datetime_index) is not None):
@@ -110,4 +112,4 @@ def extract_data(json_filename):
                 f"""Hit the limit of {row_limit} rows, try again a smaller window than {date_filter} """
             )
         else:
-            load_s3_json(data, file_name, f"looker/{query_name}/{file_name}")
+            load_object_to_s3(data, file_name, f"looker/{query_name}/{file_name}")

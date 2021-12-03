@@ -6,25 +6,29 @@ import tempfile
 import boto3
 import json
 import logging
+import csv
 
 BUCKET_NAME = os.getenv("bucket_name")
 
-def load_s3_json(dataframe, local_file_name, output_filename, s3_bucket=BUCKET_NAME):
-    """ This saves a json locally to a temporary file and then uploads it """
+def load_object_to_s3(data, local_file_name, output_filename, s3_bucket=BUCKET_NAME):
+    """ This saves a json, list of json, or CSV object
+    locally to a temporary file and then uploads it to the S3 bucket"""
 
     temp_dir = tempfile.TemporaryDirectory()
     input_filename = os.path.join(temp_dir.name, local_file_name)
     ## allow for it to be csv
-    if isinstance(dataframe, dict) or isinstance(dataframe, list):
-        with open(input_filename, 'w') as f:
-            json.dump(dataframe, f)
-    else:
-        print("Invalid instance type; please use only JSON or Dataframe")
-        return
+    with open(input_filename, 'w') as f:
+        if isinstance(data, dict) or isinstance(data, list):
+            json.dump(data, f)
+        else:
+            fp = csv.DictWriter(f, data[0].keys())
+            fp.writeheader()
+            fp.writerows(data)
     load_s3(s3_bucket, input_filename, output_filename)
     # remove temp directory if done
     if os._exists(temp_dir.name):
         shutil.rmtree(temp_dir.name)
+
 
 def load_s3(s3_bucket, input_filename, output_filename):
     """ Pushes file to S3. """
@@ -36,7 +40,7 @@ def load_s3(s3_bucket, input_filename, output_filename):
     s3:// {s3_bucket} as {output_filename}"
     )
 
-def read_json(prefix, s3_bucket=BUCKET_NAME):
+def find_existing_data(prefix, s3_bucket=BUCKET_NAME):
     """ Given a key within an S3 buckets, reads through all files and returns content"""
     s3_storage = boto3.resource("s3")
     my_bucket = s3_storage.Bucket(s3_bucket)
