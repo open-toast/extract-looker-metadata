@@ -35,7 +35,7 @@ def find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_serv
     last_date = "1990-01-01 00:00:00"
     for last_date_object in date_object:
         for row in last_date_object:
-            print(datetime_index)
+            print(row)
             last_date = max(last_date, row[datetime_index])
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
         logging.error(f"No date found; running with {first_date}")
