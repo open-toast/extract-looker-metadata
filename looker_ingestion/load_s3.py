@@ -20,8 +20,9 @@ def load_object_to_s3(data, local_file_name, output_filename, s3_bucket,
         if isinstance(data, dict) or isinstance(data, list):
             json.dump(data, f)
         else:
+            data_list = data.split('\n')
             fp = csv.writer(f)
-            fp.writerows(data)
+            fp.writerows(data_list)
 
     if aws_server_public_key is not None:
         session = create_session(aws_server_public_key, aws_server_secret_key)
@@ -63,7 +64,6 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
     for object_summary in my_bucket.objects.filter(Prefix=prefix):
         content_object = s3_storage.Object(s3_bucket, object_summary.key)
         file_content = content_object.get()['Body'].read().decode('utf-8')
-        print(content_object.key)
         if content_object.key.endswith('.json'):
             json_content = [json.loads(line) for line in file_content.splitlines()]
         elif content_object.key.endswith('.csv'):
