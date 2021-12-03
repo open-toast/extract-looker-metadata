@@ -100,8 +100,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
             fields=query_body["fields"],
             filters=filters,
             sorts=query_body.get("sorts"),
-            limit=row_limit,
-            force_production=True
+            limit=row_limit
         )
 
         query_run = sdk.run_inline_query(result_format, write_query)
