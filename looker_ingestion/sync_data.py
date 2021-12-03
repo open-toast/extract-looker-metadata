@@ -68,9 +68,8 @@ def extract_data(json_filename):
 
     sdk = looker_sdk.init31()
     queries = extract_query_details(json_filename)
-    for query in queries:
-        query_name = query["name"]
-        query_body = query["body"]
+    for query_body in queries:
+        query_name = query_body["name"]
         file_name = f"looker_{query_name}_{NOW}"
         model = query_body.get("model")
         fields = query_body.get("fields")
@@ -78,7 +77,7 @@ def extract_data(json_filename):
         sorts = query_body.get("sorts")
         metadata = query_body.get("metadata")
         datetime_index = metadata.get("datetime")
-        row_limit = metadata.get("row_limit")
+        row_limit = query_body.get("limit")
         result_format = metadata.get("result_format") or "json"
         view = query_body.get("view")
         
@@ -90,7 +89,8 @@ def extract_data(json_filename):
 
         ## hit the Looker API
         write_query = looker_sdk.models.WriteQuery(
-            model=model, view=view, fields=fields, filters=filters, sorts=sorts, limit=row_limit
+            model=model, view=view, fields=fields, filters=filters, sorts=sorts, limit=row_limit,
+            force_production=True
         )
         # if result_format not in ["json", "csv"]:
         #     raise ValueError("Please enter a valid return format")
