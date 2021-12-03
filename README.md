@@ -6,9 +6,9 @@ This project takes a JSON file of information about a Looker query and runs it o
 
 ### Prerequisites
 
-[Looker SDK](https://docs.looker.com/reference/api-and-integration/api-sdk) and credentials. Configure your [variables variables](https://github.com/looker-open-source/sdk-codegen#configuring-lookerini-or-env)
+[Looker SDK](https://docs.looker.com/reference/api-and-integration/api-sdk) and credentials. Configure your [Looker variables](https://github.com/looker-open-source/sdk-codegen#configuring-lookerini-or-env)
 [S3 credentials](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html) and [boto3](https://pypi.org/project/boto3/)
-In addition to AWS creds, bucket name should be an enviroment variable "bucket_name"
+In addition to AWS creds, bucket name should be an environment variable "bucket_name"
 
 ### Installing
 
@@ -16,9 +16,9 @@ In addition to AWS creds, bucket name should be an enviroment variable "bucket_n
 python -m pip install looker_ingestion
 ```
 
-* Fill out either the looker.ini or stored your Looker credentials as enviroment variables
+* Fill out either the looker.ini or store your Looker credentials as environment variables
 * Ensure you have credentials that can access your S3 bucket
-* Store both the creds and the bucket name as an enviromental varaible
+* Store both the creds and the bucket name as an environmental variable
 
 You can use the function directly:
 
@@ -75,7 +75,7 @@ The fields to fill out in the JSON file are:
 
 In order to do incremental, we find the MAX(datetime) found in S3 and then add up to 24 hours to that, stopping if we reach the current time. We also have a row limit of 60000 and a time limit of 5 minutes (adjustable as a Looker env variable). If it hits the row limit, you get all the data it has pulled so far (a good reason to use sorts), but if you hit the timeout limit you get nothing. For this reason, we like to keep the increments small.
 
-If there is an error or no new rows are found or the row limit is reached, the script will log an errror.
+If there is an error or no new rows are found or the row limit is reached, the script will log an error.
 
 ## Running the tests
 
@@ -87,7 +87,7 @@ pytest tests/
 
 #### test_extract_query_details
 
-This test ensures that the script can read in a JSON file and produce the the 
+This test ensures that the script can read in a JSON file and produce the 
 right attributes from the JSON.
 
 #### test_find_date_range

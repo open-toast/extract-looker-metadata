@@ -11,7 +11,6 @@ import looker_sdk
 from .load_s3 import load_s3_json, read_json
 
 PARENT_PATH = os.path.dirname(__file__)
-LIMIT = 60000
 NOW = str(time.time()).split(".")[0]
 
 
@@ -19,11 +18,8 @@ def extract_query_details(json_filename):
     """ Gets the query/body for each query from the JSON file """
     json_file_path = os.path.join(PARENT_PATH, json_filename)
     with open(json_file_path, "r") as json_file:
-        uploaded_tables = json.load(json_file)
-    query_name = list(uploaded_tables.keys())[0]
-    query_details = uploaded_tables[query_name]
-    query_body = query_details.get("body")
-    return query_name, query_body
+        queries = json.load(json_file)
+    return queries
 
 
 def find_last_date(query_name, datetime_index):
@@ -77,7 +73,9 @@ def extract_data(json_filename):
     fields = query_body.get("fields")
     filters = query_body.get("filters")
     sorts = query_body.get("sorts")
-    datetime_index = query_body.get("datetime")
+    metadata = query_body.get("metadata")
+    datetime_index = metadata.get("datetime")
+    row_limit = metadata.get("row_limit")
     view = query_body.get("view")
     ## if the filter already exists, dont run it
     ## if there's no datetime, don't run it
@@ -87,7 +85,7 @@ def extract_data(json_filename):
 
     ## hit the Looker API
     write_query = looker_sdk.models.WriteQuery(
-        model=model, view=view, fields=fields, filters=filters, sorts=sorts, limit=LIMIT
+        model=model, view=view, fields=fields, filters=filters, sorts=sorts, limit=row_limit
     )
     query_run = sdk.run_inline_query("json", write_query)
     data = json.loads(query_run)
