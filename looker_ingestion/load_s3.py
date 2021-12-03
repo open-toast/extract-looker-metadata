@@ -14,6 +14,7 @@ def load_s3_json(dataframe, local_file_name, output_filename, s3_bucket=BUCKET_N
 
     temp_dir = tempfile.TemporaryDirectory()
     input_filename = os.path.join(temp_dir.name, local_file_name)
+    ## allow for it to be csv
     if isinstance(dataframe, dict) or isinstance(dataframe, list):
         with open(input_filename, 'w') as f:
             json.dump(dataframe, f)

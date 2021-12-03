@@ -1,3 +1,4 @@
+<!-- Might be worth running an auto format on this to split lines and make it a bit easier to read without scrolling left and right. Intellij will format it nicely. -->
 # Looker Metadata Extractor
 
 This project takes a JSON file of information about a Looker query and runs it on a Looker instance and sends the results to an S3 bucket.
