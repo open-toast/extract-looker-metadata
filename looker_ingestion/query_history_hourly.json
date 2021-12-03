@@ -1,5 +1,5 @@
 [{
-    "name": "query_history_hourly",
+    "name": "query_history_hourly_csv",
     "model": "i__looker",
     "explore": "history",
     "fields": [
@@ -15,11 +15,6 @@
         "history.id",
         "history.message",
         "history.dashboard_id",
-        "history.status",
-        "history.result_source",
-        "history.source",
-        "history.runtime",
-        "sql_text.text",
         "query.filter_expression",
         "query.filters",
         "query.filter_config"
