@@ -17,14 +17,12 @@ def load_object_to_s3(data, local_file_name, output_filename, s3_bucket,
     temp_dir = tempfile.TemporaryDirectory()
     input_filename = os.path.join(temp_dir.name, local_file_name)
     ## allow for it to be csv
-    with open(input_filename, 'w') as f:
+    with open(input_filename, 'w', newline='') as f:
         if isinstance(data, dict) or isinstance(data, list):
             json.dump(data, f)
         else:
             writer = csv.writer(f, delimiter=',', quotechar='"')
-            for split_line in data.split('\n'):
-
-                writer.writerow(split_line)
+            writer.writerow(data)
 
     if aws_server_public_key is not None:
         session = create_session(aws_server_public_key, aws_server_secret_key)
