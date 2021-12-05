@@ -14,6 +14,7 @@ from looker_ingestion import load_s3
 
 @mock_s3
 def test_load_object_to_s3():
+    """ Ensure that load_object_to_s3 can upload a JSON document to S3 """
     s3 = boto3.client("s3", region_name="us-east-1")
     bucket_name = "databucket"
     s3.create_bucket(Bucket=bucket_name)
@@ -25,9 +26,9 @@ def test_load_object_to_s3():
     resp = s3.get_object(Bucket=bucket_name, Key=output_filename)
     print(resp)
 
-
 @mock_s3
 def test_find_existing_data():
+    """ Ensure that find_existing_data can correctly read multiple JSON or CSV files from S3 """
     file_contents_json = [{"query.id": 4845015, "history.created_time": "2021-12-02 14:40:18"}, 
                             {"query.id": 4845015, "history.created_time": "2021-12-02 14:40:20"}]
     second_file_contents_json = [{"query.id": 4845015, "history.created_time": "2021-12-02 14:40:22"}, 
@@ -39,10 +40,10 @@ def test_find_existing_data():
     second_file_contents_csv = """Query ID, History Created Time
     845015,2021-12-02 14:40:22
     845015,2021-12-02 14:40:24"""
-    first_csv_results = [{"query id": 845015, "history created time": "2021-12-02 14:40:18"}, 
-                    {"query id": 845015, "history created time": "2021-12-02 14:40:20"}]
-    second_csv_results = [{"query id": 845015, "history created time": "2021-12-02 14:40:22"}, 
-                    {"query id": 845015, "history created time": "2021-12-02 14:40:24"}
+    first_csv_results = [{"query id": '845015', "history created time": "2021-12-02 14:40:18"}, 
+                    {"query id": '845015', "history created time": "2021-12-02 14:40:20"}]
+    second_csv_results = [{"query id": '845015', "history created time": "2021-12-02 14:40:22"}, 
+                    {"query id": '845015', "history created time": "2021-12-02 14:40:24"}
                     ]
     s3 = boto3.client("s3", region_name="us-east-1")
     s3.create_bucket(Bucket="databucket")
