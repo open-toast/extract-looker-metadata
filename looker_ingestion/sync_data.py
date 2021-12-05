@@ -97,8 +97,10 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         ## if there's no datetime, don't run it
         if not (datetime_index is None or filters.get(datetime_index) is not None):
             if result_format == "csv":
-                datetime_index = fields.index(datetime_index)
-            date_filter = find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
+                find_datetime_row = fields.index(datetime_index)
+            else:
+                find_datetime_row = datetime_index
+            date_filter = find_last_date(query_name, find_datetime_row, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
             filters[datetime_index] = f"{date_filter}"
 
         ## hit the Looker API
