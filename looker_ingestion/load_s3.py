@@ -25,7 +25,6 @@ def load_object_to_s3(data, local_file_name, output_filename, s3_bucket,
             writer = csv.writer(f, delimiter=',')
             for line in data.split('\n'):
                 writer.writerow(line.split(','))
-                break
 
     if aws_server_public_key is not None:
         session = create_session(aws_server_public_key, aws_server_secret_key)
