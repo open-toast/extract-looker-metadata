@@ -92,7 +92,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         file_name = f"looker_{query_name}_{NOW}"
         filters = query_body.get("filters")
         datetime_index = metadata.get("datetime")
-        default_days = metadata.get("default_days")
+        default_days = int(metadata.get("default_days"))
         if not default_days.is_integer():
             logging.info("Please provide a valid integer for the default date; using 1 day")
             default_days = 1
