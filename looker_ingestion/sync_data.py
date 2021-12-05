@@ -33,7 +33,7 @@ def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_buck
     ## get the largest query time in the data warehouse
     json_objects = find_existing_data(file_prefix, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
     last_date = "1990-01-01 00:00:00"
-    print(json_objects[0])
+    print(json_objects[1])
     sys.exit()
     for row in json_objects:
         print(row)
