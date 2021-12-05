@@ -95,7 +95,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         row_limit = query_body.get("limit")
         fields = query_body["fields"]
         file_prefix = f"looker/{query_name}/{result_format}"
-        full_file_name = f"{file_prefix}/{file_name}"
+        full_file_name = f"{file_prefix}/{file_name}.{result_format}"
 
         ## if the filter already exists, dont run it
         ## if there's no datetime, don't run it
