@@ -14,8 +14,17 @@ from looker_ingestion import load_s3
 
 @mock_s3
 def test_load_object_to_s3():
-    pass
-    ##load_s3.load_object_to_s3(data, local_file_name, output_filename, s3_bucket)
+    s3 = boto3.client("s3", region_name="us-east-1")
+    bucket_name = "databucket"
+    s3.create_bucket(Bucket=bucket_name)
+    local_file_name = "looker_query_100"
+    output_filename = f"looker/{local_file_name}.json"
+    data = [{"query.id": 123, "query.name": "query_name"}, 
+            {"query.id": 123, "query.name": "query2_name"}]
+    load_s3.load_object_to_s3(data, local_file_name, output_filename, bucket_name)
+    resp = s3.get_object(Bucket=bucket_name, Key=output_filename)
+    print(resp)
+
 
 @mock_s3
 def test_find_existing_data():
