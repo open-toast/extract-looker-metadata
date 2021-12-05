@@ -37,7 +37,7 @@ def find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_serv
         for row in last_date_object:
             last_date = max(last_date, row[datetime_index])
     for last_date_object in csv_objects:
-        print(last_date_object)
+        print(last_date_object[datetime_index])
         last_date = max(last_date, last_date_object[datetime_index])
 
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
