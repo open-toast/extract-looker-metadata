@@ -65,7 +65,7 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
         if content_object.key.endswith('.json'):
             json_content = [json.loads(line) for line in file_content.splitlines()]
         elif content_object.key.endswith('.csv'):
-            json_content = csv.DictReader(file_content.splitlines(True))
+            json_content = dict(csv.DictReader(file_content.splitlines(True)))
         else:
             logging.info("Found file of invalid type, not processing for most recent date")
             break
