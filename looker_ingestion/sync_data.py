@@ -38,7 +38,7 @@ def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_buck
             datetime_index = datetime_index.replace('.', ' ').replace('_', ' ')
         last_date = max(last_date, row[datetime_index])
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
-        logging.error(f"No date found; running with {first_date}")
+        logging.info(f"No date found; running with {first_date}")
         return first_date
     else:
         times = []
