@@ -9,7 +9,7 @@
     "filters": {
         "query.model": "-EMPTY",
         "user.is_looker": "No"
-    },
+    }
     "sorts": [
         "sort_by_time",
         "sort_by_name"
