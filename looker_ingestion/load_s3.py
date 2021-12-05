@@ -8,6 +8,8 @@ import json
 import logging
 import csv
 
+
+import sys
 def load_object_to_s3(data, local_file_name, output_filename, s3_bucket, 
                     aws_server_public_key=None, aws_server_secret_key=None):
     """ This saves a json, list of json, or CSV object
@@ -21,7 +23,9 @@ def load_object_to_s3(data, local_file_name, output_filename, s3_bucket,
             json.dump(data, f)
         else:
             writer = csv.writer(f, delimiter=',')
-            for line in data.split('\n'):
+            for line in data:
+                print(line)
+                sys.exit()
                 writer.writerow(line)
 
     if aws_server_public_key is not None:
