@@ -64,7 +64,7 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
         file_content = content_object.get()['Body'].read().decode('utf-8')
         if content_object.key.endswith('.json'):
             for line in file_content.splitlines(True):
-                print(json.loads(line))
+                print(line)
             json_row_objects = [json.loads(line) for line in file_content.splitlines()]
         elif content_object.key.endswith('.csv'):
             for row in csv.DictReader(file_content.splitlines(True)):
