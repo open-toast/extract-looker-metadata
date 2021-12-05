@@ -42,4 +42,3 @@ def test_find_existing_data():
     assert load_s3.find_existing_data("csv/looker_output.csv", "databucket") == file_contents_csv
     s3.put_object(Bucket="databucket", Key="csv/looker_output2.csv", Body=second_file_contents_csv)
     assert load_s3.find_existing_data("csv/looker_output", "databucket") == csv_results
-    
