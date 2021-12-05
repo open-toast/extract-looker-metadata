@@ -65,4 +65,4 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
         else:
             logging.info("Found file of invalid type, not processing for most recent date")
             break
-    return json_row_objects
+    return list(json_row_objects)
