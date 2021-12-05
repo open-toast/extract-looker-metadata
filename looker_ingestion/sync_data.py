@@ -25,19 +25,19 @@ def extract_query_details(json_filename):
     return queries
 
 
-def find_last_date(file_name, datetime_index, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key):
+def find_last_date(file_prefix, datetime_index, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key):
     """ For the relevant file path, find the date to start extracting data with
     Default: today """
 
     ## if there's no data, get the last day
     first_date = "1 day"
     ## get the largest query time in the data warehouse
-    json_objects = find_existing_data(file_name, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
+    json_objects = find_existing_data(file_prefix, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
     last_date = "1990-01-01 00:00:00"
     for last_date_object in json_objects:
         for row in last_date_object:
             ## be mindful that csv files change the format of the header
-            if file_name.endswith('.csv'):
+            if file_prefix.endswith('csv'):
                 datetime_index = datetime_index.replace('.', ' ').replace('_', ' ')
             last_date = max(last_date, row[datetime_index])
 
@@ -94,12 +94,13 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         datetime_index = metadata.get("datetime")
         row_limit = query_body.get("limit")
         fields = query_body["fields"]
-        full_file_name = f"looker/{query_name}/{result_format}/{file_name}"
+        file_prefix = f"looker/{query_name}/{result_format}"
+        full_file_name = f"{file_prefix}/{file_name}"
 
         ## if the filter already exists, dont run it
         ## if there's no datetime, don't run it
         if not (datetime_index is None or filters.get(datetime_index) is not None):
-            date_filter = find_last_date(full_file_name, datetime_index, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
+            date_filter = find_last_date(file_prefix, datetime_index, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
             filters[datetime_index] = f"{date_filter}"
 
         ## hit the Looker API
@@ -123,7 +124,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
                 f"""Hit the limit of {row_limit} rows, try again a smaller window than {date_filter} """
             )
         else:
-            load_object_to_s3(query_run, file_name, f"looker/{query_name}/{result_format}/{file_name}", aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
+            load_object_to_s3(query_run, file_name, f"{full_file_name}", aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Process some integers.')
