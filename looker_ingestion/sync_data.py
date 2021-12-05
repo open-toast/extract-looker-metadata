@@ -75,7 +75,6 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
     It takes one argument: the filename of the JSON file in this folder
     that holds the query info"""
 
-    sdk = looker_sdk.init31()
     queries = extract_query_details(json_filename)
     REQUIRED_KEYS = ["name", "model", "explore", "fields"]
     for query_body in queries:
@@ -120,7 +119,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
             sorts=query_body.get("sorts"),
             limit=row_limit
         )
-
+        sdk = looker_sdk.init31()
         query_run = sdk.run_inline_query(result_format, write_query)
         if result_format == "json":
             query_run = json.loads(query_run)
