@@ -28,24 +28,18 @@ def load_object_to_s3(data, local_file_name, output_filename, s3_bucket,
     else:
         s3_storage = boto3.resource("s3")
 
-    load_s3(s3_bucket, input_filename, output_filename, s3_storage)
+    s3_storage.meta.client.upload_file(input_filename, s3_bucket, output_filename)
     # remove temp directory if done
     if os._exists(temp_dir.name):
         shutil.rmtree(temp_dir.name)
 
 def create_session(aws_server_public_key, aws_server_secret_key):
+    """ DOC STRING """
     return boto3.Session(
         aws_access_key_id=aws_server_public_key,
         aws_secret_access_key=aws_server_secret_key,
     )
 
-def load_s3(s3_bucket, input_filename, output_filename, s3_storage):
-    """ Pushes file to S3. """
-    s3_storage.meta.client.upload_file(input_filename, s3_bucket, output_filename)
-    logging.info(
-        f"COMPLETE: {input_filename} loaded into \
-    s3:// {s3_bucket} as {output_filename}"
-    )
 
 def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server_secret_key=None):
     """ Given a key within an S3 buckets, reads through all files and returns content"""
@@ -67,7 +61,7 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
             json_row_objects = [json.loads(line) for line in file_content.splitlines()]
         elif content_object.key.endswith('.csv'):
             for row in csv.DictReader(file_content.splitlines(True)):
-                json_row_objects.append({k: int(v) for k, v in row.items()})
+                json_row_objects.append({k: v for k, v in row.items()})
         else:
             logging.info("Found file of invalid type, not processing for most recent date")
             break
