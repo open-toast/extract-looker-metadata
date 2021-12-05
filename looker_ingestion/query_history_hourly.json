@@ -30,6 +30,7 @@
     "limit": "60000",
     "metadata": {
         "datetime": "history.created_time",
+        "default_days": "4 day",
         "result_format": "json"
     }
 }]

@@ -25,12 +25,12 @@ def extract_query_details(json_filename):
     return queries
 
 
-def find_last_date(file_prefix, datetime_index, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key):
+def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key):
     """ For the relevant file path, find the date to start extracting data with
     Default: today """
 
     ## if there's no data, get the last day
-    first_date = "50 day"
+    first_date = f"{find_last_date} day"
     ## get the largest query time in the data warehouse
     json_objects = find_existing_data(file_prefix, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
     last_date = "1990-01-01 00:00:00"
@@ -92,6 +92,10 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         file_name = f"looker_{query_name}_{NOW}"
         filters = query_body.get("filters")
         datetime_index = metadata.get("datetime")
+        default_days = metadata.get("default_days")
+        if not default_days.is_integer():
+            logging.info("Please provide a valid integer for the default date; using 1 day")
+            default_days = 1
         row_limit = query_body.get("limit")
         fields = query_body["fields"]
         file_prefix = f"looker/{query_name}/{result_format}"
@@ -100,7 +104,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         ## if the filter already exists, dont run it
         ## if there's no datetime, don't run it
         if not (datetime_index is None or filters.get(datetime_index) is not None):
-            date_filter = find_last_date(file_prefix, datetime_index, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
+            date_filter = find_last_date(file_prefix, datetime_index, default_days, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
             filters[datetime_index] = f"{date_filter}"
 
         ## hit the Looker API
