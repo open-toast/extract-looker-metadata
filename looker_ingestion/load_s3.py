@@ -20,9 +20,9 @@ def load_object_to_s3(data, local_file_name, output_filename, s3_bucket,
         if isinstance(data, dict) or isinstance(data, list):
             json.dump(data, f)
         else:
-            data_list = data.split('\n')
-            fp = csv.writer(f)
-            fp.writerows(data_list)
+            writer = csv.writer(f, delimiter=',')
+            for line in data:
+                writer.writerow(line)
 
     if aws_server_public_key is not None:
         session = create_session(aws_server_public_key, aws_server_secret_key)
