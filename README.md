@@ -120,7 +120,9 @@ For the format of Looker filters, see this [page](https://docs.looker.com/refere
 
 In order to do incremental, we find the MAX(datetime) found in S3 and then add up to 24 hours to that, stopping if we reach the current time. We also have a row limit of 60000 and a time limit of 5 minutes (adjustable as a Looker env variable). If it hits the row limit, you get all the data it has pulled so far (a good reason to use sorts), but if you hit the timeout limit you get nothing. For this reason, we like to keep the increments small.
 
-**metadata.result_format**: The format that the results can be retrieved as, all supported are listed [here](https://docs.looker.com/reference/api-and-integration/api-reference/v3.1/query). However, because of the original use of this project is for databases, this project only supports json and csv. 
+**metadata.result_format**: The format that the results can be retrieved as, all supported are listed [here](https://docs.looker.com/reference/api-and-integration/api-reference/v3.1/query). However, because of the original use of this project is for databases, this project only supports JSON and CSV.
+Note: although you can run a query with a CSV format and then change it to JSON or vice versa, these will write to different folders and therefore restart the incremental date if using incrementals.
+
 If there is an error or no new rows are found or the row limit is reached, the script will log an error.
 
 ## Running the tests
