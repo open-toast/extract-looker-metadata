@@ -30,6 +30,6 @@
     "limit": "60000",
     "metadata": {
         "datetime": "history.created_time",
-        "result_format": "csv"
+        "result_format": "json"
     }
 }]
