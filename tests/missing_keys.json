@@ -1,0 +1,24 @@
+[{
+    "model": "test_model",
+    "explore": "history",
+    "fields": [
+        "query.id",
+        "history.created_time"
+    ],
+    "filters": {
+        "query.model": "-EMPTY",
+        "history.runtime": "NOT NULL",
+        "user.is_looker": "No"
+    },
+    "sorts": [
+        "sort_by_time",
+        "sort_by_name"
+    ],
+    "limit": "5000",
+    "metadata": {
+        "datetime": "history.created_time",
+        "default_days": "1",
+        "result_format": "parquet"
+    }
+}
+]
