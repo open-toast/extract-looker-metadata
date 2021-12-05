@@ -33,9 +33,9 @@ def find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_serv
     ## get the largest query time in the data warehouse
     date_object = find_existing_data(f"looker/{query_name}/looker_{query_name}", aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
     last_date = "1990-01-01 00:00:00"
+    print(datetime_index)
     for last_date_object in date_object:
         for row in last_date_object:
-            print(datetime_index)
             print(row[datetime_index])
             last_date = max(last_date, row[datetime_index])
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
