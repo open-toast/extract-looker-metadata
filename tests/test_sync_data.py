@@ -46,7 +46,7 @@ def test_find_date_range():
     fifty_days_ago = (today - timedelta(days = 50)).replace(microsecond=0)
     today_string = today.strftime('%Y-%m-%d %H:%M:%S')
 
-    assert sync_data.find_date_range(today_string) == None
+    assert sync_data.find_date_range(today_string) == "-1"
     assert sync_data.find_date_range(convert_string(one_day_ago)) == [one_day_ago, today]
     assert sync_data.find_date_range(convert_string(two_days_ago)) == [two_days_ago, one_day_ago]
     assert sync_data.find_date_range(convert_string(fifty_days_ago)) == [fifty_days_ago, fortynine_days_ago]
