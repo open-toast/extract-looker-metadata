@@ -71,7 +71,7 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
         elif content_object.key.endswith('.csv'):
             csv_row_objects = csv.reader(file_content.splitlines(True))
             headers = next(csv_row_objects, None)
-            header_list = list((map(lambda x: x.lower(), headers))) * len(csv_row_objects)
+            header_list = list((map(lambda x: x.lower(), headers))) * len(list(csv_row_objects))
         else:
             logging.info("Found file of invalid type, not processing for most recent date")
             break
