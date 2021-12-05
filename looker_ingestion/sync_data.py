@@ -31,17 +31,14 @@ def find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_serv
     ## if there's no data, get the last day
     first_date = "1 day"
     ## get the largest query time in the data warehouse
-    date_objects = find_existing_data(f"looker/{query_name}/looker_{query_name}", aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
+    json_objects, csv_objects = find_existing_data(f"looker/{query_name}/looker_{query_name}", aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
     last_date = "1990-01-01 00:00:00"
-    for last_date_object in date_objects:
-        if isinstance(last_date_object[0], dict):
-            for row in last_date_object:
-                last_date = max(last_date, row[datetime_index])
-        elif isinstance(last_date_object[0], list):
-            print(last_date_object[0])
-        else:
-            print(type(last_date_object[0]))
-            print(last_date_object)
+    for last_date_object in json_objects:
+        for row in last_date_object:
+            last_date = max(last_date, row[datetime_index])
+    for last_date_object in csv_objects:
+        last_date = max(last_date, last_date_object[datetime_index])
+
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
         logging.error(f"No date found; running with {first_date}")
         return first_date
@@ -99,6 +96,8 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         ## if the filter already exists, dont run it
         ## if there's no datetime, don't run it
         if not (datetime_index is None or filters.get(datetime_index) is not None):
+            if result_format == "csv":
+                datetime_index = fields.index(datetime_index)
             date_filter = find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
             filters[datetime_index] = f"{date_filter}"
 
