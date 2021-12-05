@@ -21,7 +21,8 @@ def extract_query_details(json_filename):
     json_file_path = os.path.join(PARENT_PATH, json_filename)
     with open(json_file_path, "r") as json_file:
         queries = json.load(json_file)
-        print(type(queries))
+    if isinstance(queries, dict):
+        queries = [queries]
     return queries
 
 
