@@ -89,7 +89,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         result_format = metadata.get("result_format") or "json"
         if result_format not in ["json", "csv"]:
             raise ValueError("Invalid instance type; please use only json or csv")
-        file_name = f"looker_{query_name}_{NOW}.{result_format}"
+        file_name = f"looker_{query_name}_{NOW}"
         filters = query_body.get("filters")
         datetime_index = metadata.get("datetime")
         row_limit = query_body.get("limit")
