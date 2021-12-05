@@ -26,6 +26,7 @@ def test_extract_query_details():
     assert test_query[0]["sorts"][1] == "sort_by_name"
     assert test_query[0]["metadata"]["result_format"] == "json"
     assert test_query[1]["metadata"]["result_format"] == "csv"
+
     with pytest.raises(ValueError):
          sync_data.extract_query_details("../tests/invalid_query.json")
 

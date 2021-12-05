@@ -134,7 +134,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
             load_object_to_s3(query_run, file_name, f"{full_file_name}", aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
 
 def parse_args():
-    """ DOC STRING """
+    """ Parses arguments via the command line """
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--json_file', dest='json_file', type=str, required=True,
                     help='the JSON file location that contains the data to run the Looker query or queries')

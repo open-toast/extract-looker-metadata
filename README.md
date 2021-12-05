@@ -4,7 +4,6 @@ This project takes a JSON file of information about a Looker query and runs it o
 
 `POST/api/3.1/queries/run/{result_format}`
 
-
 ## Getting Started
 
 ### Prerequisites
@@ -29,7 +28,7 @@ You can use the function directly:
 ```python
 from looker_ingestion import sync_data
 
-sync_data.extract_data('query_history_hourly.json')
+sync_data.extract_data('my_looker_query.json')
 ```
 
 You can call the function as part of an Airflow task:
@@ -46,7 +45,7 @@ with DAG(
     RUN_CUSTOM_HISTORY_WEEKLY_QUERIES = PythonOperator(
         task_id="run_custom_history_weekly_queries",
         python_callable=sync_data.extract_data,
-        op_kwargs={'json_filename': 'weekly_query_history.json'}
+        op_kwargs={'json_filename': 'my_looker_query.json'}
     )
 ```
 
@@ -90,7 +89,42 @@ This query is generated using a JSON object. Each file can have one or many JSON
 An example JSON file looks like this:
 
 ```json
-PUT EXAMPLE WHEN DONE
+[{
+    "name": "query_history",
+    "model": "i__looker",
+    "explore": "history",
+    "fields": [
+        "query.id",
+        "history.created_time",
+        "query.model",
+        "query.view",
+        "space.id",
+        "look.id",
+        "dashboard.id",
+        "user.id",
+        "query.fields",
+        "history.id",
+        "history.message",
+        "history.dashboard_id",
+        "query.filter_expression",
+        "query.filters",
+        "query.filter_config"
+    ],
+    "filters": {
+        "query.model": "-EMPTY",
+        "history.runtime": "NOT NULL",
+        "user.is_looker": "No"
+    },
+    "sorts": [
+        "history.created_time"
+    ],
+    "limit": "10000",
+    "metadata": {
+        "datetime": "history.created_time",
+        "default_days": "4",
+        "result_format": "csv"
+    }
+}]
 ```
 
 The fields to fill out in the JSON file are:
