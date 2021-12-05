@@ -68,6 +68,7 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
             csv_content = csv.reader(file_content.splitlines(True))
             for row in csv_content:
                 print(row)
+                break
         else:
             logging.info("Found file of invalid type, not processing for most recent date")
             break
