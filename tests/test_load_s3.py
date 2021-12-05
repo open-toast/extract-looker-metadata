@@ -33,7 +33,7 @@ def test_find_existing_data():
     s3 = boto3.client("s3", region_name="us-east-1")
     s3.create_bucket(Bucket="databucket")
     
-    s3.put_object(Bucket="databucket", Key="json/looker_output.json", Body=file_contents_json)
+    s3.put_object(Bucket="databucket", Key="json/looker_output.json", Body=json.dumps(file_contents_json))
     assert load_s3.find_existing_data("json/looker_output.json", "databucket") == file_contents_json
     s3.put_object(Bucket="databucket", Key="json/looker_output2.json", Body=second_file_contents_json)
     assert load_s3.find_existing_data("json/looker_output", "databucket") == file_contents_json + second_file_contents_json
