@@ -37,7 +37,7 @@ def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_buck
         if file_prefix.endswith('csv'):
             datetime_index = datetime_index.replace('.', ' ').replace('_', ' ')
         last_date = max(last_date, row[datetime_index])
-
+        print(last_date)
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
         logging.error(f"No date found; running with {first_date}")
         return first_date
@@ -52,7 +52,7 @@ def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_buck
                     to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
 
 def find_date_range(start_time):
-    """ DOC STRING"""
+    """ If an incremental extraction, find the start and end date to use in the query"""
     start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
     hours_old = (
         datetime.now() - start_time
