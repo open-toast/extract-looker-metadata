@@ -59,6 +59,8 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
     my_bucket = s3_storage.Bucket(s3_bucket)
     json_objects = []
     csv_objects = []
+    json_row_objects = []
+    csv_row_objects= []
 
     for object_summary in my_bucket.objects.filter(Prefix=prefix):
         content_object = s3_storage.Object(s3_bucket, object_summary.key)
