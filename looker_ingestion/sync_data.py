@@ -34,7 +34,9 @@ def find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_serv
     json_objects, csv_objects = find_existing_data(f"looker/{query_name}/looker_{query_name}", aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
     last_date = "1990-01-01 00:00:00"
     for last_date_object in json_objects:
-        last_date = max(last_date, last_date_object[datetime_index])
+        for row in last_date_object:
+            print(row)
+            last_date = max(last_date, row[datetime_index])
     for last_date_object in csv_objects:
         last_date = max(last_date, last_date_object[datetime_index])
 
