@@ -10,7 +10,7 @@ import argparse
 import sys
 
 import looker_sdk
-from load_s3 import load_object_to_s3, find_existing_data
+from .load_s3 import load_object_to_s3, find_existing_data
 
 PARENT_PATH = os.path.dirname(__file__)
 NOW = str(time.time()).split(".")[0]
