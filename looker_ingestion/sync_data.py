@@ -74,7 +74,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
 
     sdk = looker_sdk.init31()
     queries = extract_query_details(json_filename)
-    REQUIRED_KEYS = ["name", "model", "explore", "fields", "metadata"]
+    REQUIRED_KEYS = ["name", "model", "explore", "fields"]
     for query_body in queries:
         
         for key in REQUIRED_KEYS:
@@ -86,7 +86,6 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         result_format = metadata.get("result_format") or "json"
         if result_format not in ["json", "csv"]:
             raise ValueError("Invalid instance type; please use only json or csv")
-        file_name = f"looker_{query_name}_{NOW}"
         filters = query_body.get("filters")
         datetime_index = metadata.get("datetime")
         default_days = metadata.get("default_days")
@@ -97,9 +96,11 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
             default_days = 1
         else:
             default_days = int(default_days)
-        row_limit = query_body.get("limit")
+        row_limit = query_body.get("limit") or 5000
+
         fields = query_body["fields"]
         file_prefix = f"looker/{query_name}/{result_format}"
+        file_name = f"looker_{query_name}_{NOW}"
         full_file_name = f"{file_prefix}/{file_name}.{result_format}"
 
         ## if the filter already exists, dont run it
@@ -131,7 +132,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
                 f"""Hit the limit of {row_limit} rows, try again a smaller window than {date_filter} """
             )
         else:
-            load_object_to_s3(query_run, file_name, f"{full_file_name}", aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
+            load_object_to_s3(query_run, file_name, full_file_name, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
 
 def parse_args():
     """ Parses arguments via the command line """

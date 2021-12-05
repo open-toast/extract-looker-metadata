@@ -185,7 +185,7 @@ For the format of Looker filters, see this [page](https://docs.looker.com/refere
 
 **sorts**: A list of fields you want to sort by. ASC by default, you can also put DESC to sort by descending
 
-**limits**: The row limit enforced on the query. If the row limit is reached, the data will still return, but only up to the row limit amount.
+**limits**: The row limit enforced on the query. If the row limit is reached, the data will still return, but only up to the row limit amount. Default is 5000.
 
 **metadata.datetime**: In order to allow for incremental extractions, this field functions as the field that time ranges can be filtered on. This is effectively “what field do you want to use so we can extract only new data?” Extracting all data is probably unrealistic because of time and row limits. If this field also exists in your filters, we will defer to the filter value. If not, we will calculate the next chunk of data we can bring in
 
