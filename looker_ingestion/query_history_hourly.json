@@ -1,5 +1,5 @@
 [{
-    "name": "query_history_hourly_csv",
+    "name": "query_history",
     "model": "i__looker",
     "explore": "history",
     "fields": [
@@ -27,7 +27,7 @@
     "sorts": [
         "history.created_time"
     ],
-    "limit": "60000",
+    "limit": "10000",
     "metadata": {
         "datetime": "history.created_time",
         "default_days": "4",

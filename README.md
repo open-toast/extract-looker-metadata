@@ -61,16 +61,16 @@ python sync_data.py --json_file /usr/extract-looker-metadata/looker_ingestion/my
 The following Looker terms are referenced throughout the project:
 
 * Model and View
-** A model refers to a file in Looker that defines a single database connection and a collection of Explores to run on that database
-** More information [here](https://docs.looker.com/data-modeling/getting-started/model-development)
+  * A model refers to a file in Looker that defines a single database connection and a collection of Explores to run on that database
+  * More information [here](https://docs.looker.com/data-modeling/getting-started/model-development)
 * View
-** A view is a file in Looker of a single database table or a derived table
-** A view is not referenced explicitly in this project; instead, field names begin with their view name
-** More information [here](https://docs.looker.com/data-modeling/getting-started/model-development#view_files)
+  * A view is a file in Looker of a single database table or a derived table
+  * A view is not referenced explicitly in this project; instead, field names begin with their view name
+  * More information [here](https://docs.looker.com/data-modeling/getting-started/model-development#view_files)
 * Explore
-** Explores exist within a model and can be one to many views joined
-** This called a view throughout the Looker database/API
-** More information [here](https://docs.looker.com/reference/explore-params/explore)
+  * Explores exist within a model and can be one to many views joined
+  * This called a view throughout the Looker database/API
+  * More information [here](https://docs.looker.com/reference/explore-params/explore)
 
 ### Adding a custom extraction
 
@@ -101,7 +101,7 @@ The fields to fill out in the JSON file are:
 
 **explore**: the name of the explore you’re using to generate this query, should be in the URL of your query,e.g. history
 
-**fields**: a list of the fields you want in the form <table name>.<field name>. Note to use the names from SQL which may vary from the sidebar. In addition, you can't do calculations/custom fields unless they’re already made.
+**fields**: a list of the fields you want in the form table name.field name. Note to use the names from SQL which may vary from the sidebar. In addition, you can't do calculations/custom fields unless they’re already made.
 
 **filters**: A dictionary of filters you want to see. Use this format:
 
