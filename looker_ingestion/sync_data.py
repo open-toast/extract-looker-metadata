@@ -35,7 +35,6 @@ def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_buck
     last_date = "1990-01-01 00:00:00"
     print(len(json_objects))
     for row in json_objects:
-        print(row)
         if file_prefix.endswith('csv'):
             datetime_index = datetime_index.replace('.', ' ').replace('_', ' ')
         last_date = max(last_date, row[datetime_index])
@@ -48,7 +47,7 @@ def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_buck
         times = find_date_range(last_date)
         if times == -1:
             sys.exit(0)
-        if times is None or times == []:
+        if times sis None or times == []:
             raise ValueError("No valid time range found")
         return f"""{times[0].strftime('%Y-%m-%d %H:%M:%S')} 
                     to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
