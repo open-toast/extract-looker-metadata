@@ -1,5 +1,6 @@
 """ Extracts data from a given JSON file path, converts it to a Looker query
 and writes the data to S3 """
+
 import time
 import json
 import os

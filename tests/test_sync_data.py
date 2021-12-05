@@ -13,7 +13,12 @@ from datetime import datetime, timedelta
 
 
 def test_extract_data():
-    raise NotImplemented
+    with pytest.raises(ValueError):
+         sync_data.extract_data("../tests/invalid_query.json")
+    with pytest.raises(KeyError):
+         sync_data.extract_data("../tests/missing_keys.json")
+    with pytest.raises(ValueError):
+         sync_data.extract_data("../tests/invalid_json.json")
 
 def test_extract_query_details():
     """ Ensures that the script can read in a JSON file and produce the
@@ -28,15 +33,7 @@ def test_extract_query_details():
     assert test_queries[1]["metadata"]["result_format"] == "csv"
 
     test_query = sync_data.extract_query_details("../tests/test_query.json")
-    assert test_queries[0]["name"] == "test_singular_query"
-
-    with pytest.raises(ValueError):
-         sync_data.extract_query_details("../tests/invalid_query.json")
-    with pytest.raises(KeyError):
-         sync_data.extract_query_details("../tests/missing_keys.json")
-    with pytest.raises(ValueError):
-         sync_data.extract_query_details("../tests/invalid_json.json")
-
+    assert test_query[0]["name"] == "test_singular_query"
 
 def test_find_date_range():
     """
