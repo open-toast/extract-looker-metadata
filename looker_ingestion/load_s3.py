@@ -69,6 +69,7 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
             json_content = []
             for line in list(order_dict_content):
                 json_content.append(json.dumps(line))
+                print(json_content)
         else:
             logging.info("Found file of invalid type, not processing for most recent date")
             break
