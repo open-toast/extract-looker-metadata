@@ -21,6 +21,7 @@ def extract_query_details(json_filename):
     json_file_path = os.path.join(PARENT_PATH, json_filename)
     with open(json_file_path, "r") as json_file:
         queries = json.load(json_file)
+        print(type(queries))
     return queries
 
 
@@ -76,7 +77,6 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
     queries = extract_query_details(json_filename)
     REQUIRED_KEYS = ["name", "model", "explore", "fields"]
     for query_body in queries:
-        
         for key in REQUIRED_KEYS:
             if query_body.get(key) is None:
                 raise KeyError(f"{key} is a mandatory element in the JSON")
