@@ -7,6 +7,7 @@ import boto3
 import json
 import logging
 import csv
+import sys 
 
 def load_object_to_s3(data, local_file_name, output_filename, s3_bucket, 
                     aws_server_public_key=None, aws_server_secret_key=None):
@@ -62,6 +63,8 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
         elif content_object.key.endswith('.csv'):
             for row in csv.DictReader(file_content.splitlines(True)):
                 json_row_objects.append({k: v for k, v in row.items()})
+                print(json_row_objects)
+                sys.exit()
         else:
             logging.info("Found file of invalid type, not processing for most recent date")
             break
