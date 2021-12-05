@@ -66,7 +66,7 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
             json_content = [json.loads(line) for line in file_content.splitlines()]
         elif content_object.key.endswith('.csv'):
             order_dict_content = csv.DictReader(file_content.splitlines(True))
-            ordered_dict_from_csv = list(order_dict_content)[0]
+            ordered_dict_from_csv = list(order_dict_content)
             json_content = dict(ordered_dict_from_csv)
             print(json_content)
         else:
