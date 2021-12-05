@@ -124,7 +124,44 @@ An example JSON file looks like this:
         "default_days": "4",
         "result_format": "csv"
     }
-}]
+},
+{
+    "name": "query_history",
+    "model": "i__looker",
+    "explore": "history",
+    "fields": [
+        "query.id",
+        "history.created_time",
+        "query.model",
+        "query.view",
+        "space.id",
+        "look.id",
+        "dashboard.id",
+        "user.id",
+        "query.fields",
+        "history.id",
+        "history.message",
+        "history.dashboard_id",
+        "query.filter_expression",
+        "query.filters",
+        "query.filter_config"
+    ],
+    "filters": {
+        "query.model": "-EMPTY",
+        "history.runtime": "NOT NULL",
+        "user.is_looker": "No"
+    },
+    "sorts": [
+        "history.created_time"
+    ],
+    "limit": "5000",
+    "metadata": {
+        "datetime": "history.created_time",
+        "default_days": "1",
+        "result_format": "json"
+    }
+}
+]
 ```
 
 The fields to fill out in the JSON file are:

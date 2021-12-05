@@ -27,7 +27,7 @@
     "sorts": [
         "history.created_time"
     ],
-    "limit": "10000",
+    "limit": "1000",
     "metadata": {
         "datetime": "history.created_time",
         "default_days": "4",
@@ -63,10 +63,10 @@
     "sorts": [
         "history.created_time"
     ],
-    "limit": "10000",
+    "limit": "1000",
     "metadata": {
         "datetime": "history.created_time",
-        "default_days": "4",
+        "default_days": "1",
         "result_format": "json"
     }
 }]
