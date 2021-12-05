@@ -25,9 +25,9 @@ def test_find_existing_data():
     845015,2021-12-02 14:40:22
     845015,2021-12-02 14:40:24"""
     csv_results = """[{"query id": 4845015, "history created time": "2021-12-02 14:40:22"}, 
-                    {"query id": 4845015, "history created_time": "2021-12-02 14:40:24"},
-                    {"query id": 4845015, "history created_time": "2021-12-02 14:40:22"}, 
-                    {"query id": 4845015, "history created_time": "2021-12-02 14:40:24"}
+                    {"query id": 4845015, "history created time": "2021-12-02 14:40:24"},
+                    {"query id": 4845015, "history created time": "2021-12-02 14:40:22"}, 
+                    {"query id": 4845015, "history created time": "2021-12-02 14:40:24"}
                     ]"""
     s3 = boto3.client("s3", region_name="us-east-1")
     s3.create_bucket(Bucket="databucket")
