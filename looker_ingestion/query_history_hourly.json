@@ -18,7 +18,7 @@
         "query.filter_expression",
         "query.filters",
         "query.filter_config"
-    ]
+    ],
     "filters": {
         "query.model": "-EMPTY",
         "history.runtime": "NOT NULL",

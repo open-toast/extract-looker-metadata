@@ -34,6 +34,8 @@ def test_extract_query_details():
          sync_data.extract_query_details("../tests/invalid_query.json")
     with pytest.raises(KeyError):
          sync_data.extract_query_details("../tests/missing_keys.json")
+    with pytest.raises(ValueError):
+         sync_data.extract_query_details("../tests/invalid_json.json")
 
 
 def test_find_date_range():
