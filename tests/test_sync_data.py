@@ -19,13 +19,16 @@ def test_extract_query_details():
     """ Ensures that the script can read in a JSON file and produce the
     right attributes from the JSON."""
 
-    test_query = sync_data.extract_query_details("../tests/test_queries.json")
+    test_queries = sync_data.extract_query_details("../tests/test_queries.json")
 
-    assert test_query[0]["name"] == "test_query_name"
-    assert test_query[0]["model"] == "test_model"
-    assert test_query[0]["sorts"][1] == "sort_by_name"
-    assert test_query[0]["metadata"]["result_format"] == "json"
-    assert test_query[1]["metadata"]["result_format"] == "csv"
+    assert test_queries[0]["name"] == "test_query_name"
+    assert test_queries[0]["model"] == "test_model"
+    assert test_queries[0]["sorts"][1] == "sort_by_name"
+    assert test_queries[0]["metadata"]["result_format"] == "json"
+    assert test_queries[1]["metadata"]["result_format"] == "csv"
+
+    test_query = sync_data.extract_query_details("../tests/test_query.json")
+    assert test_queries[0]["name"] == "test_singular_query"
 
     with pytest.raises(ValueError):
          sync_data.extract_query_details("../tests/invalid_query.json")
