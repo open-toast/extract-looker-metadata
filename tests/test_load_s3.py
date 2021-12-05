@@ -39,6 +39,6 @@ def test_find_existing_data():
     assert load_s3.find_existing_data("json/looker_output", "databucket") == file_contents_json + second_file_contents_json
 
     s3.put_object(Bucket="databucket", Key="csv/looker_output.csv", Body=file_contents_csv)
-    assert load_s3.find_existing_data("csv/looker_output.csv", "databucket") == file_contents_csv
+    assert load_s3.find_existing_data("csv/looker_output.csv", "databucket") == first_csv_results
     s3.put_object(Bucket="databucket", Key="csv/looker_output2.csv", Body=second_file_contents_csv)
     assert load_s3.find_existing_data("csv/looker_output", "databucket") == first_csv_results + second_csv_results
