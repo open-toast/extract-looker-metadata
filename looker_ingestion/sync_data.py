@@ -1,5 +1,6 @@
 """ Extracts data from a given JSON file path, converts it to a Looker query
 and writes the data to S3 """
+import csv
 import time
 import json
 import os
@@ -31,15 +32,14 @@ def find_last_date(file_name, datetime_index, aws_storage_bucket_name, aws_serve
     ## if there's no data, get the last day
     first_date = "1 day"
     ## get the largest query time in the data warehouse
-    json_objects, csv_objects, csv_headers = find_existing_data(file_name, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
+    json_objects = find_existing_data(file_name, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
     last_date = "1990-01-01 00:00:00"
     for last_date_object in json_objects:
         for row in last_date_object:
+            ## be mindful that csv files change the format of the header
+            if file_name.endswith('.csv'):
+                datetime_index = datetime_index.replace('.', ' ').replace('_', ' ')
             last_date = max(last_date, row[datetime_index])
-    for index, last_date_object in enumerate(csv_objects):
-        csv_format_datetime_index = datetime_index.replace('.', ' ').replace('_', ' ')
-        find_datetime_row = csv_headers[index].index(csv_format_datetime_index)
-        last_date = max(last_date, last_date_object[find_datetime_row])
 
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
         logging.error(f"No date found; running with {first_date}")
