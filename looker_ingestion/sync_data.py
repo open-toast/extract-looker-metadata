@@ -47,7 +47,7 @@ def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_buck
         times = find_date_range(last_date)
         if times == -1:
             sys.exit(0)
-        if times sis None or times == []:
+        if times is None or times == []:
             raise ValueError("No valid time range found")
         return f"""{times[0].strftime('%Y-%m-%d %H:%M:%S')} 
                     to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
