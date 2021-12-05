@@ -31,6 +31,6 @@
     "metadata": {
         "datetime": "history.created_time",
         "default_days": "4",
-        "result_format": "csv"
+        "result_format": "json"
     }
 }]
