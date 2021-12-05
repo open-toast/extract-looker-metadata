@@ -92,10 +92,14 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         file_name = f"looker_{query_name}_{NOW}"
         filters = query_body.get("filters")
         datetime_index = metadata.get("datetime")
-        default_days = int(metadata.get("default_days"))
-        if not default_days.is_integer():
+        default_days = metadata.get("default_days")
+        try:
+            int(default_days)
+        except ValueError:
             logging.info("Please provide a valid integer for the default date; using 1 day")
             default_days = 1
+        else:
+            default_days = int(default_days)
         row_limit = query_body.get("limit")
         fields = query_body["fields"]
         file_prefix = f"looker/{query_name}/{result_format}"
