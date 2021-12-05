@@ -21,7 +21,7 @@ def load_object_to_s3(data, local_file_name, output_filename, s3_bucket,
             json.dump(data, f)
         else:
             writer = csv.writer(f, delimiter=',')
-            for line in data:
+            for line in data.split('\n'):
                 writer.writerow(line)
 
     if aws_server_public_key is not None:
