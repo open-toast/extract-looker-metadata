@@ -10,7 +10,7 @@ setup(
         'looker_sdk'
     ],
     setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
+    tests_require=['pytest', 'moto'],
         classifiers= [
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 3"

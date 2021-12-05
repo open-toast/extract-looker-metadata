@@ -40,7 +40,6 @@ def create_session(aws_server_public_key, aws_server_secret_key):
         aws_secret_access_key=aws_server_secret_key,
     )
 
-
 def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server_secret_key=None):
     """ Given a key within an S3 buckets, reads through all files and returns content"""
     
