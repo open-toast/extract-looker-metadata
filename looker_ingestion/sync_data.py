@@ -41,7 +41,7 @@ def find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_serv
             print(last_date_object[0])
         else:
             print(type(last_date_object[0]))
-            print(last_date_object[0])
+            print(last_date_object)
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
         logging.error(f"No date found; running with {first_date}")
         return first_date
