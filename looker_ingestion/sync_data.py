@@ -37,7 +37,6 @@ def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_buck
         if file_prefix.endswith('csv'):
             datetime_index = datetime_index.replace('.', ' ').replace('_', ' ')
         last_date = max(last_date, row[datetime_index])
-    print(f"last date is {last_date}")
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
         logging.error(f"No date found; running with {first_date}")
         return first_date
@@ -107,7 +106,6 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         ## if there's no datetime, don't run it
         if not (datetime_index is None or filters.get(datetime_index) is not None):
             date_filter = find_last_date(file_prefix, datetime_index, default_days, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
-            print(f"{date_filter}")
             filters[datetime_index] = f"{date_filter}"
 
         ## hit the Looker API
