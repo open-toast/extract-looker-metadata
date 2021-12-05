@@ -57,20 +57,17 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
         s3_storage = boto3.resource("s3")
 
     my_bucket = s3_storage.Bucket(s3_bucket)
-    json_objects = []
+    file_objects = []
 
     for object_summary in my_bucket.objects.filter(Prefix=prefix):
         content_object = s3_storage.Object(s3_bucket, object_summary.key)
         file_content = content_object.get()['Body'].read().decode('utf-8')
         if content_object.key.endswith('.json'):
-            json_content = [json.loads(line) for line in file_content.splitlines()]
+            row_objects = [json.loads(line) for line in file_content.splitlines()]
         elif content_object.key.endswith('.csv'):
-            csv_content = csv.reader(file_content.splitlines(True))
-            for row in csv_content:
-                print(row)
-                break
+            row_objects = csv.reader(file_content.splitlines(True))
         else:
             logging.info("Found file of invalid type, not processing for most recent date")
             break
-        json_objects.extend(json_content)
-    return json_objects
+        file_objects.extend(row_objects)
+    return file_objects
