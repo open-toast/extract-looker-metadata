@@ -33,14 +33,11 @@ def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_buck
     ## get the largest query time in the data warehouse
     json_objects = find_existing_data(file_prefix, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
     last_date = "1990-01-01 00:00:00"
-    for last_date_object in json_objects:
-        print(last_date_object)
-        for row in last_date_object:
-            print(row)
-            ## be mindful that csv files change the format of the header
-            if file_prefix.endswith('csv'):
-                datetime_index = datetime_index.replace('.', ' ').replace('_', ' ')
-            last_date = max(last_date, row[datetime_index])
+    for row in json_objects:
+        print(row)
+        if file_prefix.endswith('csv'):
+            datetime_index = datetime_index.replace('.', ' ').replace('_', ' ')
+        last_date = max(last_date, row[datetime_index])
 
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
         logging.error(f"No date found; running with {first_date}")
