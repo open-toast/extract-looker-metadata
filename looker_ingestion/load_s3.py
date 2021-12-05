@@ -7,7 +7,6 @@ import boto3
 import json
 import logging
 import csv
-import sys 
 
 def load_object_to_s3(data, local_file_name, output_filename, s3_bucket, 
                     aws_server_public_key=None, aws_server_secret_key=None):
@@ -35,7 +34,7 @@ def load_object_to_s3(data, local_file_name, output_filename, s3_bucket,
         shutil.rmtree(temp_dir.name)
 
 def create_session(aws_server_public_key, aws_server_secret_key):
-    """ DOC STRING """
+    """ If AWS credentials are passed, create a session with them """
     return boto3.Session(
         aws_access_key_id=aws_server_public_key,
         aws_secret_access_key=aws_server_secret_key,
@@ -66,6 +65,4 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
                 json_row_objects.append({k: v for k, v in row.items()})
         else:
             logging.info("Found file of invalid type, not processing for most recent date")
-            break
-        print(len(json_row_objects))
     return json_row_objects
