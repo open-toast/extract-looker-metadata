@@ -89,10 +89,14 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         filters = query_body.get("filters")
         datetime_index = metadata.get("datetime")
         row_limit = query_body.get("limit")
-    
+        fields = query_body["fields"]
+
         ## if the filter already exists, dont run it
         ## if there's no datetime, don't run it
         if not (datetime_index is None or filters.get(datetime_index) is not None):
+            ## if it's a csv, get a number, not a field
+            if result_format == "csv":
+                datetime_index = fields.index(datetime_index)
             date_filter = find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
             filters[datetime_index] = f"{date_filter}"
 
@@ -100,7 +104,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         write_query = looker_sdk.models.WriteQuery(
             model=query_body["model"],
             view=query_body["explore"],
-            fields=query_body["fields"],
+            fields=fields,
             filters=filters,
             sorts=query_body.get("sorts"),
             limit=row_limit
