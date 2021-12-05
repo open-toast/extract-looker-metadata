@@ -7,9 +7,8 @@ import boto3
 import json
 import logging
 import csv
+import shlex
 
-
-import sys
 def load_object_to_s3(data, local_file_name, output_filename, s3_bucket, 
                     aws_server_public_key=None, aws_server_secret_key=None):
     """ This saves a json, list of json, or CSV object
@@ -24,7 +23,7 @@ def load_object_to_s3(data, local_file_name, output_filename, s3_bucket,
         else:
             writer = csv.writer(f, delimiter=',')
             for line in data.split('\n'):
-                writer.writerow(line.split(','))
+                writer.writerow(shlex.splt(line))
 
     if aws_server_public_key is not None:
         session = create_session(aws_server_public_key, aws_server_secret_key)
