@@ -1,5 +1,5 @@
 [{
-    "name": "teste_invalid_query",
+    "name": "test_invalid_query",
     "model": "test_model",
     "explore": "history",
     "fields": [
@@ -15,9 +15,11 @@
         "sort_by_time",
         "sort_by_name"
     ],
+    "limit": "5000",
     "metadata": {
-        "result_format": "parquet",
-        "datetime": "history.created_time"
+        "datetime": "history.created_time",
+        "default_days": "1",
+        "result_format": "parquet"
     }
 }
 ]

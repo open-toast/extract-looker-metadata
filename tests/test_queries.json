@@ -16,13 +16,14 @@
         "sort_by_name"
     ],
     "metadata": {
-        "result_format": "json",
-        "datetime": "history.created_time"
+        "datetime": "history.created_time",
+        "default_days": "1",
+        "result_format": "json"
     }
 },
 {
-    "name": "test_query_name_2",
-    "model": "test_model_2",
+    "name": "test_query_name_csv",
+    "model": "test_model_csv",
     "explore": "history",
     "fields": [
         "query.id",
@@ -35,8 +36,9 @@
         "sort_by_name"
     ],
     "metadata": {
-        "result_format": "csv",
-        "datetime": "history.created_time"
+        "datetime": "history.created_time",
+        "default_days": "1",
+        "result_format": "csv"
     }
 }
 ]
