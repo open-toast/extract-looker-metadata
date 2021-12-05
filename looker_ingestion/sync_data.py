@@ -35,9 +35,9 @@ def find_last_date(query_name, datetime_index, aws_storage_bucket_name, aws_serv
     last_date = "1990-01-01 00:00:00"
     for last_date_object in json_objects:
         for row in last_date_object:
-            last_date = max(last_date, row[datetime_index]).capitalize()
+            last_date = max(last_date, row[datetime_index])
     for index, last_date_object in enumerate(csv_objects):
-        csv_format_datetime_index = datetime_index.replace('.', ' ')
+        csv_format_datetime_index = datetime_index.replace('.', ' ').replace('_', ' ').capitalize()
         find_datetime_row = csv_headers[index].index(csv_format_datetime_index)
         last_date = max(last_date, last_date_object[find_datetime_row])
 
