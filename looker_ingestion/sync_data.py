@@ -36,6 +36,7 @@ def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_buck
     for last_date_object in json_objects:
         print(last_date_object)
         for row in last_date_object:
+            print(row)
             ## be mindful that csv files change the format of the header
             if file_prefix.endswith('csv'):
                 datetime_index = datetime_index.replace('.', ' ').replace('_', ' ')
