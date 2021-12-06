@@ -23,8 +23,9 @@ def test_load_object_to_s3():
     data = [{"query.id": 123, "query.name": "query_name"}, 
             {"query.id": 123, "query.name": "query2_name"}]
     load_s3.load_object_to_s3(data, local_file_name, output_filename, bucket_name)
-    resp = s3.get_object(Bucket=bucket_name, Key=output_filename)
-    print(resp)
+    obj = s3.get_object(Bucket=bucket_name, Key=output_filename)
+    j = json.loads(obj['Body'].read())
+    assert j == data
 
 @mock_s3
 def test_find_existing_data():
