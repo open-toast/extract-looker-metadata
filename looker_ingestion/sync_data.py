@@ -137,7 +137,8 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
 
 def parse_args():
     """ Parses arguments via the command line """
-    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser = argparse.ArgumentParser(prog='extract_looker_metadata',
+                    description='Intakes a file name to parse to create a Loooker query')
     parser.add_argument('--json_file', dest='json_file', type=str, required=True,
                     help='the JSON file location that contains the data to run the Looker query or queries')
     parser.add_argument('--aws_server_public_key', dest='aws_server_public_key',
@@ -149,10 +150,13 @@ def parse_args():
 
     return parser.parse_args()
 
-if __name__ == '__main__':
+def main():
     args = parse_args()
     if args.aws_server_public_key is not None:
         extract_data(args.json_file, args.aws_storage_bucket_name, args.aws_server_public_key, args.aws_server_secret_key)
     else:
         extract_data(args.json_file)
+
+if __name__ == '__main__':
+    main()
 

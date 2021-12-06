@@ -14,7 +14,7 @@ In addition to AWS creds, bucket name should be an environment variable "bucket_
 
 ### Installing
 
-```sql
+```bash
 python -m pip install looker_ingestion
 ```
 
