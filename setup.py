@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='looker_ingestion',
-    version='1.0.1',
+    version='1.0.2',
     description='Extracts adhoc queries from the Looker API to S3',
     packages=find_packages(),
     entry_points={'console_scripts': [
