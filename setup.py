@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='looker_ingestion',
-    version='1.0.2',
+    version='1.0.3',
     description='Extracts adhoc queries from the Looker API to S3',
     long_description="""This takes a JSON file with arguments for a custom Looker query, 
         and runs it and sends the output in JSON or CSV to S3 """,
