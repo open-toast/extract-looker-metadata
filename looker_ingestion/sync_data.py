@@ -14,7 +14,6 @@ from .load_s3 import load_object_to_s3, find_existing_data
 
 PARENT_PATH = os.path.dirname(__file__)
 NOW = str(time.time()).split(".")[0]
-## change to aws_storage_bucket_name
 BUCKET_NAME = os.getenv("bucket_name")
 
 def extract_query_details(json_filename):
@@ -68,7 +67,6 @@ def find_date_range(start_time):
     logging.info(f"{start_time} to {end_time}")
     return [start_time, end_time]
 
-
 def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_public_key=None, aws_server_secret_key=None):
     """ Read in the JSON file, iterate through query info,
     run the queries, and write to s3. If no data, don't do SQL parts
@@ -76,6 +74,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
     that holds the query info"""
 
     queries = extract_query_details(json_filename)
+
     REQUIRED_KEYS = ["name", "model", "explore", "fields"]
     for query_body in queries:
         for key in REQUIRED_KEYS:
