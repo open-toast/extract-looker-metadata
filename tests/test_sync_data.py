@@ -13,10 +13,18 @@ from datetime import datetime, timedelta
 
 
 def test_extract_data():
+    """ Tests the extract_data() function to ensure that, if invalid JSON schemas
+    are given, a specific error is returned to the user """
+
+    ## trying to use parquet instead of csv/json
     with pytest.raises(ValueError):
          sync_data.extract_data("../tests/invalid_query.json")
+    
+    ## not sending query name (a required key)
     with pytest.raises(KeyError):
          sync_data.extract_data("../tests/missing_keys.json")
+
+    ## invalid JSON (missing comma)
     with pytest.raises(ValueError):
          sync_data.extract_data("../tests/invalid_json.json")
 

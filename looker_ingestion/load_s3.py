@@ -35,6 +35,7 @@ def load_object_to_s3(data, local_file_name, output_filename, s3_bucket,
 
 def create_session(aws_server_public_key, aws_server_secret_key):
     """ If AWS credentials are passed, create a session with them """
+
     return boto3.Session(
         aws_access_key_id=aws_server_public_key,
         aws_secret_access_key=aws_server_secret_key,
