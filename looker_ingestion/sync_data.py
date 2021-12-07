@@ -88,6 +88,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
             raise ValueError("Invalid instance type; please use only json or csv")
         filters = query_body.get("filters")
         datetime_index = metadata.get("datetime")
+        sorts = query_body.get("sorts")
         default_days = metadata.get("default_days")
         try:
             int(default_days)
@@ -108,6 +109,11 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         if not (datetime_index is None or filters.get(datetime_index) is not None):
             date_filter = find_last_date(file_prefix, datetime_index, default_days, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
             filters[datetime_index] = f"{date_filter}"
+        
+        ## if it's an incremental load by datetime, it must be sorted by that datetime
+        ## in asc ordering as its primary sort
+        if datetime_index is not None and sorts[0] != datetime_index and sorts[0].lower() != datetime_index.lower() + ' asc':
+            raise ValueError("For an incremental job, the first sort must be the metadata.datetime field ASC")
 
         ## hit the Looker API
         write_query = looker_sdk.models.WriteQuery(
@@ -115,7 +121,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
             view=query_body["explore"],
             fields=fields,
             filters=filters,
-            sorts=query_body.get("sorts"),
+            sorts=sorts,
             limit=row_limit
         )
         sdk = looker_sdk.init31()
@@ -126,10 +132,6 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         if query_run == [] or query_run is None:
             logging.error(
                 f"No data returned when attempting to fetch Looker query history for {date_filter}"
-            )
-        elif len(query_run) == row_limit:
-            logging.error(
-                f"""Hit the limit of {row_limit} rows, try again a smaller window than {date_filter} """
             )
         else:
             load_object_to_s3(query_run, file_name, full_file_name, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
