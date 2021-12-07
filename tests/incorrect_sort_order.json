@@ -1,0 +1,22 @@
+{
+    "name": "test_singular_query",
+    "model": "test_singular_model",
+    "explore": "history",
+    "fields": [
+        "query.id",
+        "history.created_time"
+    ],
+    "filters": {
+        "query.model": "-EMPTY",
+        "user.is_looker": "No"
+    },
+    "sorts": [
+        "sort_by_time",
+        "history.created_time"
+    ],
+    "metadata": {
+        "datetime": "history.created_time",
+        "default_days": "1",
+        "result_format": "json"
+    }
+}

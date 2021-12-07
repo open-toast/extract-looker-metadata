@@ -27,6 +27,12 @@ def test_extract_data():
     ## invalid JSON (missing comma)
     with pytest.raises(ValueError):
          sync_data.extract_data("../tests/invalid_json.json")
+    
+    ## does not have sort when incremental
+    ## or has incorrect sort order
+    with pytest.raises(ValueError):
+         sync_data.extract_data("../tests/missing_sort.json")
+         sync_data.extract_data("../tests/incorrect_sort_order.json")
 
 def test_extract_query_details():
     """ Ensures that the script can read in a JSON file and produce the
