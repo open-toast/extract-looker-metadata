@@ -60,7 +60,7 @@ python sync_data.py --json_file /usr/extract-looker-metadata/looker_ingestion/my
 The following Looker terms are referenced throughout the project:
 
 * Model and View
-  * A model refers to a file in Looker that defines a single database connection and a collection of Explores to run on that database
+  * A model refers to a file in Looker that defines a single database connection and a collection of Explores to run on that database. The model that we use in the example here is [i__looker](https://docs.looker.com/admin-options/tutorials/i__looker).
   * More information [here](https://docs.looker.com/data-modeling/getting-started/model-development)
 * View
   * A view is a file in Looker of a single database table or a derived table
@@ -191,7 +191,7 @@ For the format of Looker filters, see this [page](https://docs.looker.com/refere
 
 In order to do incremental, we find the MAX(datetime) found in S3 and then add up to 24 hours to that, stopping if we reach the current time. We also have a row limit of 60000 and a time limit of 5 minutes (adjustable as a Looker env variable). If it hits the row limit, you get all the data it has pulled so far (a good reason to use sorts), but if you hit the timeout limit you get nothing. For this reason, we like to keep the increments small.
 
-**metadata.datetime**: If using a datetime to create an incremental extraction, this is the default number of days to filter for when doing the first extraction. Please enter only the number of days, e.g. "4".
+**metadata.default_days**: If using a datetime to create an incremental extraction, this is the default number of days to filter for when doing the first extraction. Please enter only the number of days, e.g. "4".
 If invalid, such as "4 days" instead of "4", it will run with a default of 1 day
 
 **metadata.result_format**: The format that the results can be retrieved as, all supported are listed [here](https://docs.looker.com/reference/api-and-integration/api-reference/v3.1/query). However, because of the original use of this project is for databases, this project only supports JSON and CSV.

@@ -17,7 +17,12 @@ NOW = str(time.time()).split(".")[0]
 BUCKET_NAME = os.getenv("bucket_name")
 
 def extract_query_details(json_filename):
-    """ Gets the query/body for each query from the JSON file """
+    """ Given literal file path to a JSON object, returns the query contents 
+        Parameters:
+            json_filename (text): full path to the details of the query object
+
+        Returns:
+            queries (list): A list of dictionaries with the query details """
     json_file_path = os.path.join(PARENT_PATH, json_filename)
     with open(json_file_path, "r") as json_file:
         queries = json.load(json_file)
@@ -26,12 +31,23 @@ def extract_query_details(json_filename):
     return queries
 
 
-def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key):
+def find_last_date(file_prefix, datetime_index, default_days, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key):
     """ For the relevant file path, find the date to start extracting data with
-    Default: today """
+        Parameters:
+            file_prefix (string): The unique prefix for this query to use to read from S3 
+            datetime_index (string): The field from the query to use as the bookmark datetime
+            default_days (int): The number of days to default to if there is no historical data
+            aws_storage_bucket_name (string): Can be None - AWS bucket name
+            aws_server_public_key (string): Can be None - AWS server public key
+            aws_server_secret_key (string): Can be None - AWS secret key
+
+        Returns:
+            lookml filter (string): (Default: today) If historical data is found, a string in the form
+            start_date to end_date 
+    """
 
     ## if there's no data, get the last day
-    first_date = f"{find_last_date} day"
+    first_date = f"{default_days} day"
     ## get the largest query time in the data warehouse
     json_objects = find_existing_data(file_prefix, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
     last_date = "1990-01-01 00:00:00"
@@ -49,11 +65,20 @@ def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_buck
             sys.exit(0)
         if times is None or times == []:
             raise ValueError("No valid time range found")
-        return f"""{times[0].strftime('%Y-%m-%d %H:%M:%S')} 
+        start_time = times[0] - datetime.timedelta(minutes=5)
+        return f"""{start_time.strftime('%Y-%m-%d %H:%M:%S')} 
                     to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
 
 def find_date_range(start_time):
-    """ If an incremental extraction, find the start and end date to use in the query"""
+    """ If an incremental extraction, find the start and end date to use in the query
+        Parameters:
+            start_time (string): The datetime that we want to begin the range from
+
+        Returns:
+            [start_time, end_time] (list):  A list of the start_time and ending 24 hours later
+            or now, whichever is later
+            If the start time is within 10 minutes of the current time, return -1 to indicate not to run
+    """
     start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
     hours_old = (
         datetime.now() - start_time
@@ -71,7 +96,21 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
     """ Read in the JSON file, iterate through query info,
     run the queries, and write to s3. If no data, don't do SQL parts
     It takes one argument: the filename of the JSON file in this folder
-    that holds the query info"""
+    that holds the query info
+        Parameters:
+            json_filename (string): Literal path to the location of the query details
+        
+        Optional Paramters:
+            aws_storage_bucket_name (string): Defaults to the bucket_name enviromental variable; 
+                    the AWS bucket this extract should be stored in and read from
+            aws_server_public_key (string): The AWS public server key with access to where this file should be
+                    written and read from
+            aws_server_secret_key (string):The AWS secret server key with access to where this file should be
+                    written and read from
+
+        Returns:
+            None
+    """
 
     queries = extract_query_details(json_filename)
 
