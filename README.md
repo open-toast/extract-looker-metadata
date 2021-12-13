@@ -60,7 +60,7 @@ python sync_data.py --json_file /usr/extract-looker-metadata/looker_ingestion/my
 The following Looker terms are referenced throughout the project:
 
 * Model and View
-  * A model refers to a file in Looker that defines a single database connection and a collection of Explores to run on that database
+  * A model refers to a file in Looker that defines a single database connection and a collection of Explores to run on that database. The model that we use in the example here is [i__looker](https://docs.looker.com/admin-options/tutorials/i__looker).
   * More information [here](https://docs.looker.com/data-modeling/getting-started/model-development)
 * View
   * A view is a file in Looker of a single database table or a derived table
