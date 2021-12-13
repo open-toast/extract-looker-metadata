@@ -49,13 +49,13 @@ def find_last_date(file_prefix, datetime_index, find_last_date, aws_storage_buck
             sys.exit(0)
         if times is None or times == []:
             raise ValueError("No valid time range found")
-        return f"""{times[0].strftime('%Y-%m-%d %H:%M:%S')} 
+        start_time = times[0] - datetime.timedelta(minutes=5)
+        return f"""{start_time.strftime('%Y-%m-%d %H:%M:%S')} 
                     to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
 
 def find_date_range(start_time):
     """ If an incremental extraction, find the start and end date to use in the query"""
     start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-    start_time = start_time - datetime.timedelta(minutes=5)
     hours_old = (
         datetime.now() - start_time
     ).total_seconds() // 3600
