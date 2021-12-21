@@ -1,16 +1,16 @@
 # Looker Metadata Extractor
 
-This is a data infrastructure tool that extracts the results of any valid query against Looker,  a popular data visualization tool, and stores the results in S3. In the tool itself, metadata can be queried and manually extracted. However, not all objects that are available in the front end are exposed via the API. Instead, the data can be accessed by writing a custom query against the relevant Looker object. For instance, query history is not an API object that one can access directly, but the data can be extracted with a custom query.
+This is a data infrastructure tool that extracts the results of any valid query against Looker, a popular data visualization tool, and stores the results in S3. In the tool itself, metadata can be queried and manually extracted. However, not all objects that are available in the front end are exposed via the API. Instead, the data can be accessed by writing a custom query against the relevant Looker object. For instance, query history is not an API object that one can access directly, but the data can be extracted with a custom query.
 For definitions of terms used in this readme, please see the Terminology section.
 
 ## Getting Started
 
 ### Prerequisites
 
-This tool can be run as from the command on Linux or macOS, or imported as a package and used in a Python script.
-You need access to your Looker instance's API client_id and client_secret. credentials. Follow the directions Configure your Looker variables in in the Looker documentation for how to access the Looker API from the environment that you plan to run this script in.
-You need AWS credentials (aws_access_key_id, aws_secret_access_key) that can write to the bucket where you want to store the results. These can be stored according to the instructions here.
-and boto3 In addition to AWS credentialscreds, the name ofbucket the bucket that you want to write to name should be an environment variable called "bucket_name", for instance:
+This can be run as a command line tool on Linux or macOS, or imported as a package and used in a Python script.
+You need access to your Looker instance’s API client_id and client_secret. Follow the directions in the [Looker documentation](https://github.com/looker-open-source/sdk-codegen#configuring-lookerini-or-env) for how to access the Looker API from the environment that you plan to run this script in.
+You need AWS credentials (aws_access_key_id, aws_secret_access_key) that can write to the bucket where you want to store the results. These can be stored according to the instructions [here](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html).
+In addition, the name of the bucket that you want to write to should be an environment variable called "bucket_name", for instance:
 
 ```export bucket_name="s3://intended-bucket"```
 
@@ -34,6 +34,7 @@ from looker_ingestion import sync_data
 
 sync_data.extract_data('my_looker_query.json')
 ```
+
 You can also call this on the command line:
 
 ```bash
