@@ -23,9 +23,9 @@ python -m pip install looker_ingestion
 ```
 
 * Fill out either the looker.ini or store your Looker credentials as environment variables
-* Ensure you have credentials that can access your S3 bucket
-* Store both the creds and the bucket name as an environmental variable
-* You can also pass your AWS credentials on the command line instead of using enviromental variables
+* Ensure you have credentials that write to  your S3 bucket
+* Store the bucket name as an environmental variable
+* You can also pass your AWS credentials on the command line instead of using environment variables
 
 You can use the function directly:
 
