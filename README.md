@@ -1,18 +1,22 @@
 # Looker Metadata Extractor
 
-This project takes a JSON file of information about a Looker query and runs it on a Looker instance and sends the results to an S3 bucket. This uses the Looker SDK to query the Looker API, translating to this call:
-
-`POST/api/3.1/queries/run/{result_format}`
+This is a data infrastructure tool that extracts the results of any valid query against Looker,  a popular data visualization tool, and stores the results in S3. In the tool itself, metadata can be queried and manually extracted. However, not all objects that are available in the front end are exposed via the API. Instead, the data can be accessed by writing a custom query against the relevant Looker object. For instance, query history is not an API object that one can access directly, but the data can be extracted with a custom query.
+For definitions of terms used in this readme, please see the Terminology section.
 
 ## Getting Started
 
 ### Prerequisites
 
-[Looker SDK](https://docs.looker.com/reference/api-and-integration/api-sdk) and credentials. Configure your [Looker variables](https://github.com/looker-open-source/sdk-codegen#configuring-lookerini-or-env)
-[S3 credentials](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html) and [boto3](https://pypi.org/project/boto3/)
-In addition to AWS creds, bucket name should be an environment variable "bucket_name"
+This tool can be run as from the command on Linux or macOS, or imported as a package and used in a Python script.
+You need access to your Looker instance's API client_id and client_secret. credentials. Follow the directions Configure your Looker variables in in the Looker documentation for how to access the Looker API from the environment that you plan to run this script in.
+You need AWS credentials (aws_access_key_id, aws_secret_access_key) that can write to the bucket where you want to store the results. These can be stored according to the instructions here.
+and boto3 In addition to AWS credentialscreds, the name ofbucket the bucket that you want to write to name should be an environment variable called "bucket_name", for instance:
+
+```export bucket_name="s3://intended-bucket"```
 
 ### Installing
+
+Run the following in your terminal:
 
 ```bash
 python -m pip install looker_ingestion
@@ -30,25 +34,6 @@ from looker_ingestion import sync_data
 
 sync_data.extract_data('my_looker_query.json')
 ```
-
-You can call the function as part of an Airflow task:
-
-```python
-from looker_ingestion import sync_data
-from airflow.operators.python_operator import PythonOperator
-
-with DAG(
-    'extract_weekly_data',
-    default_args=default_args,
-    catchup=False
-) as dag:
-    RUN_CUSTOM_HISTORY_WEEKLY_QUERIES = PythonOperator(
-        task_id="run_custom_history_weekly_queries",
-        python_callable=sync_data.extract_data,
-        op_kwargs={'json_filename': 'my_looker_query.json'}
-    )
-```
-
 You can also call this on the command line:
 
 ```bash
@@ -71,22 +56,13 @@ The following Looker terms are referenced throughout the project:
   * This called a view throughout the Looker database/API
   * More information [here](https://docs.looker.com/reference/explore-params/explore)
 
-### Adding a custom extraction
+### Define a custom extraction
 
-If there are unavailable objects or another prohibition from getting data, you can write a query against i_looker and extract data with that query. You can also query any other model.
-The explores available in the i__looker model are:
+The query to extract Looker data is generated using a JSON object. Create a JSON with one to many valid query objects (defined below) and pass the absolute location of the file as an argument to the script, and the script will run that query against Looker.
 
-* History
-* Look
-* Dashboard
-* User
-* Event
-* Event Attribute
-* Field Usage
+### Example custom extraction file
 
-This query is generated using a JSON object. Each file can have one or many JSON objects.
-
-An example JSON file looks like this:
+An example JSON file looks like this. Note that it is referencing the [i__looker](https://docs.looker.com/admin-options/tutorials/i__looker) model, which contains event data about users interactions with Looker.
 
 ```json
 [{
@@ -164,15 +140,17 @@ An example JSON file looks like this:
 ]
 ```
 
+### Custom extraction JSON value reference
+
 The fields to fill out in the JSON file are:
 
 **name**: whatever you want to call this query; this will be used to store and reference this specific query in S3
 
 **model**: the name of the Looker model you want to extract from, should be in the URL of your query, e.g. i__looker
 
-**explore**: the name of the explore you’re using to generate this query, should be in the URL of your query,e.g. history
+**explore**: the name of the explore you're using to generate this query, should be in the URL of your query,e.g. history
 
-**fields**: a list of the fields you want in the form table name.field name. Note to use the names from SQL which may vary from the sidebar. In addition, you can't do calculations/custom fields unless they’re already made.
+**fields**: a list of the fields you want in the form table name.field name. Note to use the names from SQL which may vary from the sidebar. In addition, you can't do calculations/custom fields unless they're already made.
 
 **filters**: A dictionary of filters you want to see. Use this format:
 
@@ -201,11 +179,13 @@ If there is an error or no new rows are found or the row limit is reached, the s
 
 ## Running the tests
 
-to run the tests:
+To run the tests, please ensure you have cloned this repository. In addition, please install all requirements by running this in your terminal at the top of this repository:
 
-```bash
-pytest tests/
-```
+```pip install -r requirements.txt```
+
+This should install pytest, which is necessary to run these tests. Once completed, use the following command under the top directory of this repository (extract-looker-metadata) on your terminal:
+
+```pytest tests/```
 
 ## Contributing
 
