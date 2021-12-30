@@ -57,17 +57,16 @@ def find_last_date(file_prefix, datetime_index, default_days, aws_storage_bucket
         last_date = max(last_date, row[datetime_index])
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
         logging.info(f"No date found; running with {first_date}")
-        return first_date
-    else:
-        times = []
-        times = find_date_range(last_date)
-        if times == -1:
-            sys.exit(0)
-        if times is None or times == []:
-            raise ValueError("No valid time range found")
-        start_time = times[0] - datetime.timedelta(minutes=5)
-        return f"""{start_time.strftime('%Y-%m-%d %H:%M:%S')} 
-                    to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
+        last_date = (datetime.now() - timedelta(days=default_days)).strftime('%Y-%m-%d %H:%M:%S')
+    times = []
+    times = find_date_range(last_date)
+    if times == -1:
+        sys.exit(0)
+    if times is None or times == []:
+        raise ValueError("No valid time range found")
+    start_time = times[0] - datetime.timedelta(minutes=5)
+    return f"""{start_time.strftime('%Y-%m-%d %H:%M:%S')} 
+                to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
 
 def find_date_range(start_time):
     """ If an incremental extraction, find the start and end date to use in the query
