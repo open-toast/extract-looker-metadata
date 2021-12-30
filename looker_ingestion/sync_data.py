@@ -167,6 +167,11 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         query_run = sdk.run_inline_query(result_format, write_query)
         if result_format == "json":
             query_run = json.loads(query_run)
+            if query_run[0].get("looker_error") is not None:
+                logging.error(
+                    f"Error {query_run[0].get('looker_error')} returned when attempting to fetch Looker query history for {date_filter}"
+                )
+
 
         if query_run == [] or query_run is None:
             logging.error(
