@@ -64,7 +64,7 @@ def find_last_date(file_prefix, datetime_index, default_days, aws_storage_bucket
         sys.exit(0)
     if times is None or times == []:
         raise ValueError("No valid time range found")
-    start_time = times[0] - datetime.timedelta(minutes=5)
+    start_time = times[0] - timedelta(minutes=5)
     return f"""{start_time.strftime('%Y-%m-%d %H:%M:%S')} 
                 to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
 
