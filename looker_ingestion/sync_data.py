@@ -57,17 +57,16 @@ def find_last_date(file_prefix, datetime_index, default_days, aws_storage_bucket
         last_date = max(last_date, row[datetime_index])
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
         logging.info(f"No date found; running with {first_date}")
-        return first_date
-    else:
-        times = []
-        times = find_date_range(last_date)
-        if times == -1:
-            sys.exit(0)
-        if times is None or times == []:
-            raise ValueError("No valid time range found")
-        start_time = times[0] - datetime.timedelta(minutes=5)
-        return f"""{start_time.strftime('%Y-%m-%d %H:%M:%S')} 
-                    to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
+        last_date = (datetime.now() - timedelta(days=default_days)).strftime('%Y-%m-%d %H:%M:%S')
+    times = []
+    times = find_date_range(last_date)
+    if times == -1:
+        sys.exit(0)
+    if times is None or times == []:
+        raise ValueError("No valid time range found")
+    start_time = times[0] - datetime.timedelta(minutes=5)
+    return f"""{start_time.strftime('%Y-%m-%d %H:%M:%S')} 
+                to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
 
 def find_date_range(start_time):
     """ If an incremental extraction, find the start and end date to use in the query
@@ -167,6 +166,11 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         query_run = sdk.run_inline_query(result_format, write_query)
         if result_format == "json":
             query_run = json.loads(query_run)
+            if query_run[0].get("looker_error") is not None:
+                logging.error(
+                    f"Error {query_run[0].get('looker_error')} returned when attempting to fetch Looker query history for {date_filter}"
+                )
+
 
         if query_run == [] or query_run is None:
             logging.error(
