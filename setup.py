@@ -9,6 +9,7 @@ setup(
     description='Extracts adhoc queries from the Looker API to S3',
     long_description=long_description,
     long_description_content_type='text/markdown',
+    url='https://github.com/open-toast/extract-looker-metadata',
     packages=find_packages(),
     entry_points={'console_scripts': [
                 'extract_looker_metadata = looker_ingestion.sync_data:main'
