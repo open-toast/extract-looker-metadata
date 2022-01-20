@@ -10,7 +10,7 @@ import argparse
 import sys
 
 import looker_sdk
-from .load_s3 import load_object_to_s3, find_existing_data
+from load_s3 import load_object_to_s3, find_existing_data
 
 PARENT_PATH = os.path.dirname(__file__)
 NOW = str(time.time()).split(".")[0]
@@ -128,15 +128,8 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         datetime_index = metadata.get("datetime")
         sorts = query_body.get("sorts")
         default_days = metadata.get("default_days")
-        try:
-            int(default_days)
-        except ValueError:
-            logging.info("Please provide a valid integer for the default date; using 1 day")
-            default_days = 1
-        else:
-            default_days = int(default_days)
         row_limit = query_body.get("limit") or 5000
-
+        is_incremental_extraction = datetime_index is not None
         fields = query_body["fields"]
         file_prefix = f"looker/{query_name}/{result_format}"
         file_name = f"looker_{query_name}_{NOW}"
@@ -144,7 +137,15 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
 
         ## if the filter already exists, dont run it
         ## if there's no datetime, don't run it
-        if not (datetime_index is None or filters.get(datetime_index) is not None):
+        ## if there no datetime defined
+        if is_incremental_extraction and filters.get(datetime_index) is not None:
+            try:
+                int(default_days)
+            except ValueError:
+                logging.info("Please provide a valid integer for the default date; using 1 day")
+                default_days = 1
+            else:
+                default_days = int(default_days)
             date_filter = find_last_date(file_prefix, datetime_index, default_days, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
             filters[datetime_index] = f"{date_filter}"
         
