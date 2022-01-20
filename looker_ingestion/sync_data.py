@@ -78,7 +78,11 @@ def find_date_range(start_time):
             or now, whichever is later
             If the start time is within 10 minutes of the current time, return -1 to indicate not to run
     """
-    start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+    try:
+        start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        start_time = datetime.strptime(start_time + " 00:00:00", "%Y-%m-%d %H:%M:%S")
+
     hours_old = (
         datetime.now() - start_time
     ).total_seconds() // 3600
@@ -167,10 +171,11 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         query_run = sdk.run_inline_query(result_format, write_query)
         if result_format == "json":
             query_run = json.loads(query_run)
-            if query_run[0].get("looker_error") is not None:
-                logging.error(
-                    f"Error {query_run[0].get('looker_error')} returned when attempting to fetch Looker query history for {date_filter}"
-                )
+            if query_run != []:
+                if query_run[0].get("looker_error") is not None:
+                    logging.error(
+                        f"Error {query_run[0].get('looker_error')} returned when attempting to fetch Looker query history for {date_filter}"
+                    )
 
 
         if query_run == [] or query_run is None:
