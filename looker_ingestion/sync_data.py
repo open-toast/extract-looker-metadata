@@ -142,7 +142,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         ## if the filter already exists, dont run it
         ## if there's no datetime, don't run it
         ## if there no datetime defined
-        if is_incremental_extraction and filters.get(datetime_index) is not None:
+        if is_incremental_extraction and filters.get(datetime_index) is None:
             try:
                 int(default_days)
             except ValueError:
@@ -155,7 +155,7 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         
         ## if it's an incremental load by datetime, it must be sorted by that datetime
         ## in asc ordering as its primary sort
-        if datetime_index is not None and sorts[0] != datetime_index and sorts[0].lower() != datetime_index.lower() + ' asc':
+        if is_incremental_extraction and sorts[0] != datetime_index and sorts[0].lower() != datetime_index.lower() + ' asc':
             raise ValueError("For an incremental job, the first sort must be the metadata.datetime field ASC")
 
         ## hit the Looker API
