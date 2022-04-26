@@ -3,6 +3,8 @@ import os
 from moto import mock_s3
 import sys
 import json 
+import datetime
+import tzutc
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -29,7 +31,7 @@ def test_load_object_to_s3():
 
 @mock_s3
 def test_find_existing_data():
-    """ Ensure that find_existing_data can correctly read multiple JSON or CSV files from S3 """
+    """ Ensure that find_existing_data can correctly read the most recent JSON or CSV files from S3 """
     file_contents_json = [{"query.id": 4845015, "history.created_time": "2021-12-02 14:40:18"}, 
                             {"query.id": 4845015, "history.created_time": "2021-12-02 14:40:20"}]
     second_file_contents_json = [{"query.id": 4845015, "history.created_time": "2021-12-02 14:40:22"}, 
@@ -49,12 +51,20 @@ def test_find_existing_data():
     s3 = boto3.client("s3", region_name="us-east-1")
     s3.create_bucket(Bucket="databucket")
     
-    s3.put_object(Bucket="databucket", Key="json/looker_output.json", Body=json.dumps(file_contents_json))
-    assert load_s3.find_existing_data("json/looker_output.json", "databucket") == file_contents_json
-    s3.put_object(Bucket="databucket", Key="json/looker_output2.json", Body=json.dumps(second_file_contents_json))
-    assert load_s3.find_existing_data("json/looker_output", "databucket") == file_contents_json + second_file_contents_json
+    ## initially empty
+    assert load_s3.find_existing_data("json/looker_output.json", "databucket") == {}
 
-    s3.put_object(Bucket="databucket", Key="csv/looker_output.csv", Body=file_contents_csv)
+    ## pick the only file in there
+    s3.put_object(Bucket="databucket", Key="json/looker_output.json", Body=json.dumps(file_contents_json), LastModified= datetime.datetime(2021, 12, 30, 23, 40, 36, tzinfo=tzutc()))
+    assert load_s3.find_existing_data("json/looker_output.json", "databucket") == file_contents_json
+    
+    ## pick the newer file in there
+    s3.put_object(Bucket="databucket", Key="json/looker_output2.json", Body=json.dumps(second_file_contents_json), LastModified= datetime.datetime(2022, 1, 30, 23, 40, 36, tzinfo=tzutc()))
+    assert load_s3.find_existing_data("json/looker_output", "databucket") ==  second_file_contents_json
+
+    ## initially empty
+    assert load_s3.find_existing_data("csv/looker_output.csv", "databucket") == {}
+    s3.put_object(Bucket="databucket", Key="csv/looker_output.csv", Body=file_contents_csv, LastModified= datetime.datetime(2021, 12, 30, 23, 40, 36, tzinfo=tzutc()))
     assert load_s3.find_existing_data("csv/looker_output.csv", "databucket") == first_csv_results
-    s3.put_object(Bucket="databucket", Key="csv/looker_output2.csv", Body=second_file_contents_csv)
-    assert load_s3.find_existing_data("csv/looker_output", "databucket") == first_csv_results + second_csv_results
+    s3.put_object(Bucket="databucket", Key="csv/looker_output2.csv", Body=second_file_contents_csv, LastModified= datetime.datetime(2022, 1, 30, 23, 40, 36, tzinfo=tzutc()))
+    assert load_s3.find_existing_data("csv/looker_output", "databucket") ==  second_csv_results
