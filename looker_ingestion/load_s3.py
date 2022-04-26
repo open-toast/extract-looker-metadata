@@ -54,11 +54,13 @@ def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server
 
     json_row_objects = []
     response = s3_client.list_objects_v2(Bucket=s3_bucket, Prefix=prefix)
-    ### if this is the first goaround
+    
+    ### if this is the first goaround, return an empty []
+    
     try:
         all = response['Contents']
     except KeyError:
-        return {}
+        return json_row_objects
     most_recent_file = max(all, key=lambda x: x['LastModified'])
 
     content_object = s3_storage.Object(s3_bucket, most_recent_file["Key"])
