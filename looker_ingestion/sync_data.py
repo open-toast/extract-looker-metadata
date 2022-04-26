@@ -150,13 +150,14 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
                 default_days = 1
             else:
                 default_days = int(default_days)
-            date_filter = find_last_date(file_prefix, datetime_index, default_days, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
-            filters[datetime_index] = f"{date_filter}"
         
         ## if it's an incremental load by datetime, it must be sorted by that datetime
         ## in asc ordering as its primary sort
         if is_incremental_extraction and sorts[0] != datetime_index and sorts[0].lower() != datetime_index.lower() + ' asc':
             raise ValueError("For an incremental job, the first sort must be the metadata.datetime field ASC")
+        else:
+            date_filter = find_last_date(file_prefix, datetime_index, default_days, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
+            filters[datetime_index] = f"{date_filter}"
 
         ## hit the Looker API
         write_query = looker_sdk.models.WriteQuery(

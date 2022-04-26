@@ -4,7 +4,6 @@ from moto import mock_s3
 import sys
 import json 
 import datetime
-from dateutil.tz import tzutc
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -55,16 +54,16 @@ def test_find_existing_data():
     assert load_s3.find_existing_data("json/looker_output.json", "databucket") == {}
 
     ## pick the only file in there
-    s3.put_object(Bucket="databucket", Key="json/looker_output.json", Body=json.dumps(file_contents_json), LastModified= datetime.datetime(2021, 12, 30, 23, 40, 36, tzinfo=tzutc()))
+    s3.put_object(Bucket="databucket", Key="json/looker_output.json", Body=json.dumps(file_contents_json))
     assert load_s3.find_existing_data("json/looker_output.json", "databucket") == file_contents_json
     
     ## pick the newer file in there
-    s3.put_object(Bucket="databucket", Key="json/looker_output2.json", Body=json.dumps(second_file_contents_json), LastModified= datetime.datetime(2022, 1, 30, 23, 40, 36, tzinfo=tzutc()))
+    s3.put_object(Bucket="databucket", Key="json/looker_output2.json", Body=json.dumps(second_file_contents_json))
     assert load_s3.find_existing_data("json/looker_output", "databucket") ==  second_file_contents_json
 
     ## initially empty
     assert load_s3.find_existing_data("csv/looker_output.csv", "databucket") == {}
-    s3.put_object(Bucket="databucket", Key="csv/looker_output.csv", Body=file_contents_csv, LastModified= datetime.datetime(2021, 12, 30, 23, 40, 36, tzinfo=tzutc()))
+    s3.put_object(Bucket="databucket", Key="csv/looker_output.csv", Body=file_contents_csv)
     assert load_s3.find_existing_data("csv/looker_output.csv", "databucket") == first_csv_results
-    s3.put_object(Bucket="databucket", Key="csv/looker_output2.csv", Body=second_file_contents_csv, LastModified= datetime.datetime(2022, 1, 30, 23, 40, 36, tzinfo=tzutc()))
+    s3.put_object(Bucket="databucket", Key="csv/looker_output2.csv", Body=second_file_contents_csv)
     assert load_s3.find_existing_data("csv/looker_output", "databucket") ==  second_csv_results
