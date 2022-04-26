@@ -62,7 +62,7 @@ def test_find_existing_data():
     s3.create_bucket(Bucket="databucket")
 
     ## initially empty
-    assert load_s3.find_existing_data("json/looker_output.json", "databucket") == {}
+    assert load_s3.find_existing_data("json/looker_output.json", "databucket") == []
 
     ## pick the only file in there
     s3.put_object(
@@ -77,7 +77,7 @@ def test_find_existing_data():
     )
 
     ## initially empty
-    assert load_s3.find_existing_data("csv/looker_output.csv", "databucket") == {}
+    assert load_s3.find_existing_data("csv/looker_output.csv", "databucket") == []
     s3.put_object(
         Bucket="databucket", Key="csv/looker_output.csv", Body=file_contents_csv
     )
