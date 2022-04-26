@@ -42,27 +42,34 @@ def create_session(aws_server_public_key, aws_server_secret_key):
     )
 
 def find_existing_data(prefix, s3_bucket, aws_server_public_key=None, aws_server_secret_key=None):
-    """ Given a key within an S3 buckets, reads through all files and returns content"""
+    """ Given a key within an S3 buckets, find the most recently stored file and its greatest metadata date"""
     
     if aws_server_public_key is not None:
         session = create_session(aws_server_public_key, aws_server_secret_key)
         s3_storage = session.resource("s3")
     else:
         s3_storage = boto3.resource("s3")
+    
+    s3_client = boto3.client('s3')
 
-    my_bucket = s3_storage.Bucket(s3_bucket)
     json_row_objects = []
+    response = s3_client.list_objects_v2(Bucket=s3_bucket, Prefix=prefix)
+    ### if this is the first goaround
+    try:
+        all = response['Contents']
+    except KeyError:
+        return {}
+    most_recent_file = max(all, key=lambda x: x['LastModified'])
 
-    for object_summary in my_bucket.objects.filter(Prefix=prefix):
-        content_object = s3_storage.Object(s3_bucket, object_summary.key)
-        file_content = content_object.get()['Body'].read().decode('utf-8')
-        if content_object.key.endswith('.json'):
-            for line in file_content.splitlines():
-                for json_line in json.loads(line):
-                    json_row_objects.append(json_line)
-        elif content_object.key.endswith('.csv'):
-            for row in csv.DictReader(file_content.splitlines(True)):
-                json_row_objects.append({k.lower().strip(): v.strip() for k, v in row.items()})
-        else:
-            logging.info("Found file of invalid type, not processing for most recent date")
+    content_object = s3_storage.Object(s3_bucket, most_recent_file["Key"])
+    file_content = content_object.get()['Body'].read().decode('utf-8')
+    if content_object.key.endswith('.json'):
+        for line in file_content.splitlines():
+            for json_line in json.loads(line):
+                json_row_objects.append(json_line)
+    elif content_object.key.endswith('.csv'):
+        for row in csv.DictReader(file_content.splitlines(True)):
+            json_row_objects.append({k.lower().strip(): v.strip() for k, v in row.items()})
+    else:
+        logging.info("Found file of invalid type, not processing for most recent date")
     return json_row_objects
