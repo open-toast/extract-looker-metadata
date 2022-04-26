@@ -4,7 +4,7 @@ from moto import mock_s3
 import sys
 import json 
 import datetime
-import tzutc
+from dateutil.tz import tzutc
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
