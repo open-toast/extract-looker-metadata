@@ -10,7 +10,7 @@ import argparse
 import sys
 
 import looker_sdk
-from .load_s3 import load_object_to_s3, find_existing_data
+from load_s3 import load_object_to_s3, find_existing_data
 
 PARENT_PATH = os.path.dirname(__file__)
 NOW = str(time.time()).split(".")[0]
@@ -138,6 +138,12 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
         file_prefix = f"looker/{query_name}/{result_format}"
         file_name = f"looker_{query_name}_{NOW}"
         full_file_name = f"{file_prefix}/{file_name}.{result_format}"
+        
+        ## if it's an incremental load by datetime, it must be sorted by that datetime
+        ## in asc ordering as its primary sort
+        if is_incremental_extraction and sorts[0] != datetime_index and sorts[0].lower() != datetime_index.lower() + ' asc':
+            raise ValueError("For an incremental job, the first sort must be the metadata.datetime field ASC")
+
 
         ## if the filter already exists, dont run it
         ## if there's no datetime, don't run it
@@ -153,11 +159,6 @@ def extract_data(json_filename, aws_storage_bucket_name=BUCKET_NAME, aws_server_
             date_filter = find_last_date(file_prefix, datetime_index, default_days, aws_storage_bucket_name, aws_server_public_key, aws_server_secret_key)
             filters[datetime_index] = f"{date_filter}"
         
-        ## if it's an incremental load by datetime, it must be sorted by that datetime
-        ## in asc ordering as its primary sort
-        if is_incremental_extraction and sorts[0] != datetime_index and sorts[0].lower() != datetime_index.lower() + ' asc':
-            raise ValueError("For an incremental job, the first sort must be the metadata.datetime field ASC")
-
         ## hit the Looker API
         write_query = looker_sdk.models.WriteQuery(
             model=query_body["model"],
