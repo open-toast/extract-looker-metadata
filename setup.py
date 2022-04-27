@@ -5,7 +5,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='looker_ingestion',
-    version='1.1.3',
+    version='1.1.4',
     description='Extracts adhoc queries from the Looker API to S3',
     long_description=long_description,
     long_description_content_type='text/markdown',
