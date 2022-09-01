@@ -1,0 +1,27 @@
+[
+    {
+        "name": "dashboard_query_performance",
+        "model": "system__activity",
+        "explore": "history",
+        "fields": [
+            "dashboard.id",
+            "dashboard.title",
+            "history.created_time",
+            "history.runtime_in_seconds"
+        ],
+        "filters": {
+            "history.status": "complete",
+            "history.is_single_query": "Yes",
+            "dashboard.id": "NOT NULL"
+        },
+        "sorts": [
+            "history.created_time"
+        ],
+        "limit": "10000",
+        "metadata": {
+            "datetime": "history.created_time",
+            "default_days": "4",
+            "result_format": "csv"
+        }
+    }
+]

@@ -1,12 +1,13 @@
 """ To be imported to extraction scripts to push data to S3. """
 
+import csv
+import json
+import logging
 import os
 import shutil
 import tempfile
+
 import boto3
-import json
-import logging
-import csv
 
 
 def load_object_to_s3(
