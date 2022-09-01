@@ -118,6 +118,8 @@ def extract_data(
     aws_storage_bucket_name=BUCKET_NAME,
     aws_server_public_key=None,
     aws_server_secret_key=None,
+    file_prefix="looker",
+    file_name=None,
 ):
     """Read in the JSON file, iterate through query info,
     run the queries, and write to s3. If no data, don't do SQL parts
@@ -133,6 +135,8 @@ def extract_data(
                     written and read from
             aws_server_secret_key (string):The AWS secret server key with access to where this file should be
                     written and read from
+            file_prefix (string): The path to write the file on S3. Defaults to 'looker'
+            file_name (string): The name of the file to write to S3. Defaults to 'looker_<query_name>_<timestamp>'
 
         Returns:
             None
@@ -141,6 +145,7 @@ def extract_data(
     queries = extract_query_details(json_filename)
 
     REQUIRED_KEYS = ["name", "model", "explore", "fields"]
+    files_upload = []
     for query_body in queries:
         for key in REQUIRED_KEYS:
             if query_body.get(key) is None:
@@ -158,9 +163,10 @@ def extract_data(
         row_limit = query_body.get("limit") or 5000
         is_incremental_extraction = datetime_index is not None
         fields = query_body["fields"]
-        file_prefix = f"looker/{query_name}/{result_format}"
-        file_name = f"looker_{query_name}_{NOW}"
-        full_file_name = f"{file_prefix}/{file_name}.{result_format}"
+        full_file_prefix = f"{file_prefix}/{query_name}/{result_format}"
+        if not file_name:
+            file_name = f"looker_{query_name}_{NOW}"
+        full_file_name = f"{full_file_prefix}/{file_name}.{result_format}"
 
         ## if it's an incremental load by datetime, it must be sorted by that datetime
         ## in asc ordering as its primary sort
@@ -187,7 +193,7 @@ def extract_data(
             else:
                 default_days = int(default_days)
             date_filter = find_last_date(
-                file_prefix,
+                full_file_prefix,
                 datetime_index,
                 default_days,
                 aws_storage_bucket_name,
@@ -220,14 +226,16 @@ def extract_data(
                 f"No data returned when attempting to fetch Looker query history for {date_filter}"
             )
         else:
-            load_object_to_s3(
+            file_uploaded = load_object_to_s3(
                 query_run,
-                file_name,
                 full_file_name,
                 aws_storage_bucket_name,
                 aws_server_public_key,
                 aws_server_secret_key,
             )
+            files_upload.append(file_uploaded)
+
+    return files_upload
 
 
 def parse_args():

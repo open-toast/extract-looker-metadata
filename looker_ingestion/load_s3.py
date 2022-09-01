@@ -3,32 +3,19 @@
 import csv
 import json
 import logging
-import os
-import shutil
-import tempfile
 
 import boto3
+from smart_open import open
 
 
 def load_object_to_s3(
     data,
-    local_file_name,
     output_filename,
     s3_bucket,
     aws_server_public_key=None,
     aws_server_secret_key=None,
 ):
-    """This saves a json, list of json, or CSV object
-    locally to a temporary file and then uploads it to the S3 bucket"""
-
-    temp_dir = tempfile.TemporaryDirectory()
-    input_filename = os.path.join(temp_dir.name, local_file_name)
-    ## allow for it to be csv
-    with open(input_filename, "w") as f:
-        if isinstance(data, dict) or isinstance(data, list):
-            json.dump(data, f)
-        else:
-            f.writelines(data)
+    """Uploads a json, list of json, or CSV object to the S3 bucket"""
 
     if aws_server_public_key is not None:
         session = create_session(aws_server_public_key, aws_server_secret_key)
@@ -36,10 +23,17 @@ def load_object_to_s3(
     else:
         s3_storage = boto3.resource("s3")
 
-    s3_storage.meta.client.upload_file(input_filename, s3_bucket, output_filename)
-    # remove temp directory if done
-    if os._exists(temp_dir.name):
-        shutil.rmtree(temp_dir.name)
+    if not s3_bucket.startswith("s3://"):
+        s3_bucket = f"s3://{s3_bucket}"
+
+    s3_url = f"{s3_bucket}/{output_filename}"
+    with open(s3_url, "w", transport_params={"client": s3_storage.meta.client}) as f:
+        if isinstance(data, dict) or isinstance(data, list):
+            f.write(json.dumps(data))
+        else:
+            f.writelines(data)
+
+    return s3_url
 
 
 def create_session(aws_server_public_key, aws_server_secret_key):

@@ -26,7 +26,7 @@ def test_load_object_to_s3():
         {"query.id": 123, "query.name": "query_name"},
         {"query.id": 123, "query.name": "query2_name"},
     ]
-    load_s3.load_object_to_s3(data, local_file_name, output_filename, bucket_name)
+    load_s3.load_object_to_s3(data, output_filename, bucket_name)
     obj = s3.get_object(Bucket=bucket_name, Key=output_filename)
     j = json.loads(obj["Body"].read())
     assert j == data
@@ -70,7 +70,7 @@ def test_find_existing_data():
         Key="json/looker_output.json",
         Body=json.dumps(file_contents_json),
     )
-    
+
     assert (
         load_s3.find_existing_data("json/looker_output.json", "databucket")
         == file_contents_json
@@ -93,7 +93,7 @@ def test_find_existing_data():
         Key="json/looker_output2.json",
         Body=json.dumps(second_file_contents_json),
     )
-    
+
     assert (
         load_s3.find_existing_data("json/looker_output", "databucket")
         == second_file_contents_json
