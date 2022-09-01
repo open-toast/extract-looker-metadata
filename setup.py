@@ -15,7 +15,7 @@ setup(
     entry_points={
         "console_scripts": ["extract_looker_metadata = looker_ingestion.sync_data:main"]
     },
-    install_requires=["boto3", "looker_sdk"],
+    install_requires=["boto3", "looker_sdk", "smart_open"],
     setup_requires=["pytest-runner"],
     tests_require=["pytest", "moto"],
     classifiers=[

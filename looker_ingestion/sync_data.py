@@ -228,7 +228,6 @@ def extract_data(
         else:
             file_uploaded = load_object_to_s3(
                 query_run,
-                file_name,
                 full_file_name,
                 aws_storage_bucket_name,
                 aws_server_public_key,
