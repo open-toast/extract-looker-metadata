@@ -4,6 +4,7 @@
 
 - Add support for overriding default S3 prefix and filename
 - Return list of files uploaded to S3
+- Stream files directly to S3 instead of using temporary file
 
 ## [1.1.5] - 2022-08-31
 
