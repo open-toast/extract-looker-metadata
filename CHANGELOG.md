@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.1.5] - 2022-08-31
+
+- Return an `NoDataException` if all data has been processed
+- Add additional examples include example Airflow DAG
+
 ## [1.1.4] - 2022-04-27
 
 - Bug fix: Import error

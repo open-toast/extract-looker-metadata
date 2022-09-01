@@ -1,5 +1,8 @@
 # Looker Metadata Extractor
 
+[![PyPi](https://img.shields.io/pypi/v/looker_ingestion.svg)](https://pypi.org/project/looker_ingestion/)
+[![Downloads](https://pepy.tech/badge/looker_ingestion)](https://pepy.tech/project/looker_ingestion)
+
 This is a data infrastructure tool that extracts the results of any valid query against [Looker](https://looker.com/), a popular data visualization tool, and stores the results in [Amazon Simple Storage Service (Amazon S3)](https://aws.amazon.com/s3/). In the tool itself, metadata can be queried and manually extracted. However, not all objects that are available in the front end are exposed via the API. Instead, the data can be accessed by writing a custom query against the relevant Looker object. For instance, query history is not an API object that one can access directly, but the data can be extracted with a custom query.
 For definitions of terms used in this readme, please see the Terminology section.
 

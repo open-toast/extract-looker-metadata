@@ -104,8 +104,9 @@ def find_date_range(start_time):
     hours_old = (datetime.now() - start_time).total_seconds() // 3600
     ## given it a ten minute time difference
     if hours_old <= 0.16:
-        logging.warning("All up to date, not running any data")
-        raise NoDataException()
+        msg = "All up to date, not running any data"
+        logging.warning(msg)
+        raise NoDataException(msg)
     hours_old = min(int(hours_old) + 1, 24)
     end_time = start_time + timedelta(hours=hours_old, minutes=0)
     logging.info(f"{start_time} to {end_time}")
