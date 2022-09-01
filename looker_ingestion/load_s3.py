@@ -41,6 +41,8 @@ def load_object_to_s3(
     if os._exists(temp_dir.name):
         shutil.rmtree(temp_dir.name)
 
+    return os.path.join(s3_bucket, output_filename)
+
 
 def create_session(aws_server_public_key, aws_server_secret_key):
     """If AWS credentials are passed, create a session with them"""
