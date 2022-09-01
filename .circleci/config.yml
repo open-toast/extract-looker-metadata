@@ -1,7 +1,7 @@
 # .circleci/config.yml
 defaults: &defaults
   docker:
-    - image: circleci/python:3.6
+    - image: cimg/python:3.9
   working_directory: ~/repo
 
 version: 2
@@ -12,13 +12,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install Python
-          command: |
-            sudo pip install pipenv
-            pipenv install
-      - run:
           name: Install dependencies
-          command: sudo pip install -r requirements.txt
+          command: pip install -r requirements.txt
       - run:
           name: Create package distribution
           command: python setup.py sdist
