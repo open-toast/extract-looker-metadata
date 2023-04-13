@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.2.0] - 2023-04-13
+## [1.2.1] - 2023-04-13
 
 - Update to use Looker API 4.0
 
