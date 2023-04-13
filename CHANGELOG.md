@@ -2,6 +2,10 @@
 
 ## [1.2.0] - 2022-09-01
 
+- Update to use Looker API 4.0
+
+## [1.2.0] - 2022-09-01
+
 - Add support for overriding default S3 prefix and filename
 - Return list of files uploaded to S3
 - Stream files directly to S3 instead of using temporary file
