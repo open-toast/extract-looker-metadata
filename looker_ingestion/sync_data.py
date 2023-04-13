@@ -211,7 +211,7 @@ def extract_data(
             sorts=sorts,
             limit=row_limit,
         )
-        sdk = looker_sdk.init31()
+        sdk = looker_sdk.init40()
         query_run = sdk.run_inline_query(result_format, write_query)
         if result_format == "json":
             query_run = json.loads(query_run)
