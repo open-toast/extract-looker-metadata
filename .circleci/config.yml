@@ -4,7 +4,6 @@ defaults: &defaults
     - image: cimg/python:3.9
   working_directory: ~/repo
 
-version: 2
 jobs:
 
   build:
