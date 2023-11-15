@@ -59,15 +59,19 @@ def find_existing_data(
         s3_client = boto3.client("s3")
 
     json_row_objects = []
-    response = s3_client.list_objects_v2(Bucket=s3_bucket, Prefix=prefix)
+    paginator = s3_client.get_paginator('list_objects_v2')
+    for page in paginator.paginate(Bucket=s3_bucket, Prefix=prefix):
+        try:
+            contents = page["Contents"]
+        except KeyError:
+            break
+        json_row_objects.extend(contents)
 
     ### if this is the first goaround, return an empty []
-
-    try:
-        all = response["Contents"]
-    except KeyError:
+    if len(json_row_objects) == 0:
         return json_row_objects
-    most_recent_file = max(all, key=lambda x: x["LastModified"])
+
+    most_recent_file = max(json_row_objects, key=lambda x: x["LastModified"])
 
     content_object = s3_storage.Object(s3_bucket, most_recent_file["Key"])
     file_content = content_object.get()["Body"].read().decode("utf-8")
