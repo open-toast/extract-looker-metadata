@@ -69,7 +69,7 @@ def find_existing_data(
         files.extend(contents)
 
     ### if this is the first goaround, return an empty []
-    if len(json_row_objects) == 0:
+    if len(files) == 0:
         return json_row_objects
 
     most_recent_file = max(files, key=lambda x: x["LastModified"])
