@@ -69,7 +69,11 @@ def find_last_date(
     for row in json_objects:
         if file_prefix.endswith("csv"):
             datetime_index = datetime_index.replace(".", " ").replace("_", " ")
-        last_date = max(last_date, row[datetime_index])
+        try:
+            last_date = max(last_date, row[datetime_index])
+        except KeyError as e:
+            logging.error(f"Key doesn't exist in row {row}")    
+            raise e
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
         logging.info(f"No date found; running with {first_date}")
         last_date = (datetime.now() - timedelta(days=default_days)).strftime(
