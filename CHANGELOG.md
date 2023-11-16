@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.0] - 2023-04-13
+
+- Paginating calls to the s3 `list_objects_v2`
+
 ## [1.3.0] - 2023-04-13
 
 - Update to use Looker API 4.0
