@@ -1,6 +1,6 @@
 import boto3
 import os
-from moto import mock_s3
+from moto import mock_aws
 import sys
 import json
 import time
@@ -14,7 +14,7 @@ sys.path.append(looker_ingestion_dir)
 from looker_ingestion import load_s3
 
 
-@mock_s3
+@mock_aws
 def test_load_object_to_s3():
     """Ensure that load_object_to_s3 can upload a JSON document to S3"""
     s3 = boto3.client("s3", region_name="us-east-1")
@@ -32,7 +32,7 @@ def test_load_object_to_s3():
     assert j == data
 
 
-@mock_s3
+@mock_aws
 def test_find_existing_data():
     """Ensure that find_existing_data can correctly read the most recent JSON or CSV files from S3"""
     file_contents_json = [

@@ -17,7 +17,7 @@ setup(
     },
     install_requires=["boto3", "looker_sdk", "smart_open"],
     setup_requires=["pytest-runner"],
-    tests_require=["pytest", "moto"],
+    tests_require=["pytest", "moto>=5.0"],
     classifiers=[
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 3",

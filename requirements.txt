@@ -1,5 +1,5 @@
 boto3
 looker_sdk
 pytest
-moto
+moto>=5.0
 smart_open
