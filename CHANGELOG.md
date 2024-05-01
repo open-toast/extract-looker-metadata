@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.4.1] - 2024-05-01
+
+- Use `models40` for `WriteQuery`
+- Log query that is being run
+
 ## [1.4.0] - 2023-04-13
 
 - Paginating calls to the s3 `list_objects_v2`
