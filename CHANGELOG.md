@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.2] - 2024-05-01
+
+- Update unit tests to work with `moto` 5.0+
+
 ## [1.4.1] - 2024-05-01
 
 - Use `models40` for `WriteQuery`
