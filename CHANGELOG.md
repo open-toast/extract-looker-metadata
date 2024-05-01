@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.2] - 2024-05-01
+
+- Pin moto4
+
 ## [1.4.1] - 2024-05-01
 
 - Use `models40` for `WriteQuery`
