@@ -73,6 +73,7 @@ def find_existing_data(
         return json_row_objects
 
     most_recent_file = max(files, key=lambda x: x["LastModified"])
+    logging.info(f"Most recent file: {most_recent_file['Key']}")
 
     content_object = s3_storage.Object(s3_bucket, most_recent_file["Key"])
     file_content = content_object.get()["Body"].read().decode("utf-8")
