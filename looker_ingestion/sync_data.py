@@ -207,7 +207,7 @@ def extract_data(
             filters[datetime_index] = f"{date_filter}"
 
         ## hit the Looker API
-        write_query = looker_sdk.models.WriteQuery(
+        write_query = looker_sdk.models40.WriteQuery(
             model=query_body["model"],
             view=query_body["explore"],
             fields=fields,
@@ -215,6 +215,7 @@ def extract_data(
             sorts=sorts,
             limit=row_limit,
         )
+        logging.info(f"Running query: {write_query}")
         sdk = looker_sdk.init40()
         query_run = sdk.run_inline_query(result_format, write_query)
         if result_format == "json":
