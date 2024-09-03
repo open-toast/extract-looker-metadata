@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.0] - 2024-09-03
+
+- Use async query instead of run_inline_uery
+
 ## [1.4.2] - 2024-05-01
 
 - Pin moto4

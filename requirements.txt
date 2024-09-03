@@ -1,5 +1,5 @@
-boto3
-looker_sdk
+boto3==1.35.10
+looker_sdk==24.14.0
 pytest
 moto==4.2.12
 smart_open
