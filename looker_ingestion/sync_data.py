@@ -79,13 +79,13 @@ def find_last_date(
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
         logging.info(f"No date found; running with {first_date}")
         last_date = (datetime.now() - timedelta(days=default_days)).strftime("%Y-%m-%d %H:%M:%S")
-    times = []
+
     times = find_date_range(last_date)
-    if times == -1:
-        sys.exit(0)
-    if times is None or times == []:
+
+    if not times:
         raise ValueError("No valid time range found")
     start_time = times[0] - timedelta(minutes=5)
+
     return f"""{start_time.strftime('%Y-%m-%d %H:%M:%S')}
                 to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
 
@@ -191,12 +191,11 @@ def extract_data(
         ## if there no datetime defined
         if is_incremental_extraction and filters.get(datetime_index) is None:
             try:
-                int(default_days)
+                default_days = int(default_days)
             except ValueError:
                 logging.info("Please provide a valid integer for the default date; using 1 day")
                 default_days = 1
-            else:
-                default_days = int(default_days)
+
             date_filter = find_last_date(
                 full_file_prefix,
                 datetime_index,
