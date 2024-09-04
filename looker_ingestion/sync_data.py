@@ -11,8 +11,10 @@ from datetime import datetime, timedelta
 
 import looker_sdk
 
-from .exceptions import NoDataException
-from .load_s3 import find_existing_data, load_object_to_s3
+currentdir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(currentdir)
+from exceptions import NoDataException
+from load_s3 import find_existing_data, load_object_to_s3
 
 PARENT_PATH = os.path.dirname(__file__)
 NOW = str(time.time()).split(".")[0]
@@ -72,20 +74,18 @@ def find_last_date(
         try:
             last_date = max(last_date, row[datetime_index])
         except KeyError as e:
-            logging.error(f"Key doesn't exist in row {row}")    
+            logging.error(f"Key doesn't exist in row {row}")
             raise e
     if last_date is None or last_date == [] or last_date == "1990-01-01 00:00:00":
         logging.info(f"No date found; running with {first_date}")
-        last_date = (datetime.now() - timedelta(days=default_days)).strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
-    times = []
+        last_date = (datetime.now() - timedelta(days=default_days)).strftime("%Y-%m-%d %H:%M:%S")
+
     times = find_date_range(last_date)
-    if times == -1:
-        sys.exit(0)
-    if times is None or times == []:
+
+    if not times:
         raise ValueError("No valid time range found")
     start_time = times[0] - timedelta(minutes=5)
+
     return f"""{start_time.strftime('%Y-%m-%d %H:%M:%S')}
                 to {times[1].strftime('%Y-%m-%d %H:%M:%S')}"""
 
@@ -150,6 +150,9 @@ def extract_data(
 
     REQUIRED_KEYS = ["name", "model", "explore", "fields"]
     files_upload = []
+    sdk = looker_sdk.init40()
+    models = looker_sdk.models40
+
     for query_body in queries:
         for key in REQUIRED_KEYS:
             if query_body.get(key) is None:
@@ -188,14 +191,11 @@ def extract_data(
         ## if there no datetime defined
         if is_incremental_extraction and filters.get(datetime_index) is None:
             try:
-                int(default_days)
-            except ValueError:
-                logging.info(
-                    "Please provide a valid integer for the default date; using 1 day"
-                )
-                default_days = 1
-            else:
                 default_days = int(default_days)
+            except ValueError:
+                logging.info("Please provide a valid integer for the default date; using 1 day")
+                default_days = 1
+
             date_filter = find_last_date(
                 full_file_prefix,
                 datetime_index,
@@ -207,7 +207,7 @@ def extract_data(
             filters[datetime_index] = f"{date_filter}"
 
         ## hit the Looker API
-        write_query = looker_sdk.models40.WriteQuery(
+        write_query = models.WriteQuery(
             model=query_body["model"],
             view=query_body["explore"],
             fields=fields,
@@ -216,23 +216,42 @@ def extract_data(
             limit=row_limit,
         )
         logging.info(f"Running query: {write_query}")
-        sdk = looker_sdk.init40()
-        query_run = sdk.run_inline_query(result_format, write_query)
+
+        query = sdk.create_query(body=write_query)
+        created_task = models.WriteCreateQueryTask(
+            query_id=query.id, result_format=result_format
+        )
+        task = sdk.create_query_task(body=created_task)
+        elapsed = 0.0
+        delay = 0.5  # wait .5 seconds for query to finish
+
+        while True:
+            poll = sdk.query_task(query_task_id=task.id)
+            print(poll)
+            if poll.status in ("failure", "error"):
+                raise Exception("Query failed")
+            elif poll.status == "complete":
+                break
+            time.sleep(delay)
+            elapsed += delay
+
+        query_results = sdk.query_task_results(task.id)
+
         if result_format == "json":
-            query_run = json.loads(query_run)
-            if query_run != []:
-                if query_run[0].get("looker_error") is not None:
+            if query_results:
+                query_results = json.loads(query_results)
+                if query_error := query_results[0].get("looker_error") is not None:
                     logging.error(
-                        f"Error {query_run[0].get('looker_error')} returned when attempting to fetch Looker query history for {date_filter}"
+                        f"Error {query_error} returned when attempting to fetch results"
                     )
 
-        if query_run == [] or query_run is None:
+        if not query_results:
             logging.error(
-                f"No data returned when attempting to fetch Looker query history for {date_filter}"
+                "No data returned when attempting to fetch Looker results"
             )
         else:
             file_uploaded = load_object_to_s3(
-                query_run,
+                query_results,
                 full_file_name,
                 aws_storage_bucket_name,
                 aws_server_public_key,
